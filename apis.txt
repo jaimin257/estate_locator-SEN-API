@@ -1,18 +1,23 @@
 [1] Temperature of city
 -> per month min/max/average of 10 years
+-> update per month
 
 [2] Humidity of city
 -> per month average of 10 years
+-> update per month
 
 [3] Windspeed of city
 -> per month average of 10 years
+-> update per month
 
 [4] Rain of city
 -> per month average of 10 years
+-> update per month
 
 [5] Air Pollution (AQI) By location
 -> per hour average of 1 year
+-> update per month
 
 [6] Traffic By location
 -> per hour average of 1 year
-
+-> update per month
