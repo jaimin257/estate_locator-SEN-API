@@ -50,7 +50,7 @@ const userSchema = new Schema({
     wishList: {
         type: Schema.Types.ObjectId,
         ref: 'wishList',
-        require: true,
+        required: true,
     },
     userInfo: {
         type: Schema.Types.ObjectId,
