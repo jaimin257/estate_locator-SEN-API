@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
 
     /* User applied field */
-    Name : {
+    /*
+    name : {
         firstName: {
             type: String,
         },
@@ -15,14 +16,19 @@ const userSchema = new Schema({
             type: String,
         },
     },
+    */
+    firstName : {
+        type: String,
+        required: true
+    },
+    lastName : {
+        type: String,
+        required: true,
+    },
     primaryEmail: {
         type: String,
         required: true,
         unique: true, 
-    },
-    secondaryEmail: {
-        type: String,
-        unique: true,
     },
     contactNo: {
         type: String,
@@ -31,7 +37,7 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true,
-    },
+    }, 
     gender: {
         type: String,
         required: true,
@@ -40,13 +46,10 @@ const userSchema = new Schema({
 
     /* Server added field */
     createdOn: {
-        type: String,
+        type: Date,
         required: true,
     },
-    userType: {
-        type: String,
-        required: true,
-    },
+  /*
     wishList: {
         type: Schema.Types.ObjectId,
         ref: 'wishList',
@@ -56,6 +59,7 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'userInfo',
     }
+    */
 });
 
 

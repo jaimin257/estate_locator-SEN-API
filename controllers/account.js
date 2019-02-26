@@ -1,44 +1,72 @@
-const HttpStatus = require('http-status-codes');
-
 const User = require('../models/user');
-const UserInfo = require('../models/userInfo');
-
-
+const bcrypt = require('bcryptjs');
 
 module.exports = {
-    signUp: async (req, res, next) => {
-        const { emailId, password } = req.value.body;
-        const createdOn = new Date();
-
-        //Check if user already exist
-        const foundUSer = await User.findOne({ emailId });
-
-        if(foundUSer) {
-            return res.status(HttpStatus.FORBIDDEN)
-                .send(errorMessages.userAlreadyExist);
-        }
-
-        const tempUserInDB = await tempUser.findOne({ emailId });
-
-        if(!tempUserInDB) {
-            const newUser = {
-                emailId,
-                password,
-                createdOn
-            };
-
-            const savedUser = await tempUser.findOneAndUpdate({ emailId }, newUser, { upsert: true, new:true });
+    register: async (req, res, next) => {
+        const {firstName, lastName, primaryEmail, password, password2, contactNo, gender} = req.body;
+        let errors = [];
+    
+        //Check required fields
+        if(!firstName || !lastName || !primaryEmail || !password || !password2 || !contactNo || !gender) {
+            errors.push({ msg: 'Please fill in all fields' });
         } else {
-            const newUser = {
-                emailId,
-                password
-            };
+            // Check if passwords match
+            if(password !== password2) {
+                errors.push({ msg: 'Passwords do not match' });
+            }
 
-            const savedUser = await tempUser.findOneAndUpdate({ emailId }, newUser, { upsert: true, new:true });
+            // Check pass length
+            if(password.length < 6) {
+                errors.push({ msg: 'Password should be at least 6 characters' });
+            }
+
+            // Verify contact no... is it number? is it valid number?
+            
         }
+    
+        if(errors.length > 0) {
+            res.send(errors);
+        } else {
+            console.log('validation passed');
+            
+            // validation passed
+            const userFound = await User.findOne({ primaryEmail: primaryEmail });    
 
-        // functionality of sending varification link is pending
-        res.status(HttpStatus.CREATED)
-            .end('Response: Verification link sent');
+            if(userFound) {
+                errors.push({ msg: 'USer Already Exist' });
+                res.send(errors);
+            } else {
+                res.send('Welcome to estate locator');
+                
+                const createdOn = new Date();
+                const newUser = new User({
+                    firstName,
+                    lastName,
+                    primaryEmail,
+                    password,
+                    contactNo,
+                    gender,
+                    createdOn,
+                });
+
+                // Hash password
+                bcrypt.genSalt(10, (err, salt) => 
+                    bcrypt.hash(newUser.password, salt, (err, hash) => {
+                        if(err) throw err;
+
+                        // Set password to hashed value
+                        newUser.password = hash;
+                        // save user
+                        newUser.save()
+                            .then(user => {
+                                console.log('User Registered');
+                                //    res.redirect('/account/logIn');
+                            })
+                            .catch(err => console.log(err));
+                }));
+            }
+        }
     }
 };
+
+

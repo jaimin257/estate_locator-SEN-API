@@ -1,30 +1,33 @@
 const express = require('express');
-const db = require('mongoose');
-const bodyParser = require('body-parser');
-const HttpStatus = require('http-status-codes');
-const path = require('path');
-const internetAvailable = require('internet-available');
-const http = require('http');
-const https = require('https');
+const mongoose = require('mongoose');
+const passport = require('passport');
 
-
+// Passport config
+require('./configuration/passport')(passport);
 
 const app = express();
 
-/* Connecting to database */
+// DB Config
+const db = require('./configuration/keys').DB_URI;
 
-const dbURI = process.env.DB_URI;
-
-db.connect(dbURI, { useNewUrlParser: true })
-    .then(
-        () => {
-            console.log('MongoDB connection established');
-        },
-        (err) => {
-            console.log(`Cannot connect to mongoDB\n${err}`);
-        }
-    );
+// connect to Mongo
+mongoose.connect(db, { useNewUrlParser: true })
+    .then(() => console.log('MongoDB connection establlished'))
+    .catch(err => console.log(err));
 
 
-// Routes
-const account = require('./routes/account');
+// BodyParser
+app.use(express.urlencoded({ extended: false }));
+
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+const PORT = process.nextTick.PORT || 1433;
+
+app.listen(PORT, console.log(`Server started on port ${PORT}`));
+
+
+//Routes
+app.use('/', require('./routes/index'));
+app.use('/account', require('./routes/account')); 

@@ -1,6 +1,29 @@
-const router = require('express-promise-router')();
+const express = require('express');
+const router = express.Router();
 const passport = require('passport');
 
-router.route('/signup').post();
 
-router.route('/signin').post();
+const AccountController = require('../controllers/account');
+
+// Login Page
+router.get('/logIn',(req,res) => res.send('Login'));
+
+// Register Page
+router.get('/register', (req,res) => res.send('Register'));
+
+// Register Handle
+router.route('/register')
+    .post(
+        AccountController.register
+    );
+
+// Login Handle
+router.post('/logIn', (req, res, next) => {
+
+    passport.authenticate('local', {
+        successRedirect: '/dashboard',
+        failureRedirect: '/account/logIn'
+    })(req,res,next);
+});
+
+module.exports = router; 
