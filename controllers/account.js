@@ -1,7 +1,10 @@
 const User = require('../models/user');
+const UserInfo = require('../models/userInfo');
 const randomstring = require('randomstring');
 const mustache = require('mustache');
 const bcrypt = require('bcryptjs');
+
+const passport = require('../configuration/passport');
 
 // Mail setup
 const { smtpTransport } = require('../configuration/mail'),
@@ -10,13 +13,10 @@ const { smtpTransport } = require('../configuration/mail'),
     mailAccountPassword = require('../configuration/keys').MAIL_PASS;
 
 const sendVerificationMail = async (email, link) => {
-   
-    // const link = httpProtocol + '://' + host + '/account/verify/' + email + '?id=' + randomHash;
 
     const options = {
         link: link
     };
-
 
     let mailBody = mustache.render(mailTemplates.signUp.body, options);
     const mailOptions = {
@@ -30,9 +30,7 @@ const sendVerificationMail = async (email, link) => {
 
     const info = await smtpTransport.sendMail(mailOptions)
         .then()
-        .catch(err => {
-            console.log(err);
-        });
+        .catch(err => console.log(err));
 
     console.log('Verification Link sent');
 };
@@ -71,9 +69,13 @@ module.exports = {
 
             if(userFound) {
                 if(userFound.verified) {
-                    errors.push({ msg: 'USer Already Exist' });
+                    if(userFound.addedExtraInfo) {
+                        errors.push({ msg: 'User Already Exist' });
+                    } else {
+                        res.redirect('/register/step2');
+                    }
                 } else {
-                    errors.push({ msg: 'USer Already registered but not verified. Please verify your email.' });
+                    errors.push({ msg: 'USer has not yet verified his/her email address. Please verify your email.' });
                 }
 
                 res.send(errors);
@@ -123,9 +125,73 @@ module.exports = {
         else if (req.query.id === user.randomHash) {
             console.log('user email address verified succefully');
             const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
-            res.redirect('/register/step2');
+            res.redirect('/logIn');
         } else {
             console.log('Something went wrong');
+        }
+    },
+    signIn: async (req, res, next) => {
+        const { email, password } = req.body;
+        const userFound = await User.findOne({ email });
+        let errors = [];
+
+        if(!userFound) {
+            errors.push({ msg: 'Email not registered.' });
+        } else {
+            if(!userFound.verified) {
+                errors.push({ msg: 'Email not verified yet' });
+            } else if(!userFound.addedExtraInfo) {
+                res.redirect('/register/step2');
+            }
+            else {
+                console.log('Succesfully logged in');
+                res.redirect('/dashboard');
+            }
+        }
+        
+        if(errors.length > 0) {
+            res.send(errors);
+        }
+
+    },
+    registerStep2: async (req, res, next) => {
+        const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
+        const userFound = await User.findOne({ email });
+        let errors = [];
+
+        if(!userFound) {
+            errors.push({ msg: 'Email not registered.' });
+        } else {
+            if(!userFound.verified) {
+                errors.push({ msg: 'Email not verified yet' });
+            } else if(userFound.addedExtraInfo) {
+                errors.push({ msg: 'Details already given.'});
+                //res.redirect('/account/signIn');
+            } else {
+                const newUserInfo = new UserInfo({
+                    name, 
+                    sex, 
+                    mobileno, 
+                    address, 
+                    country, 
+                    state, 
+                    district, 
+                    city, 
+                    pincode,
+                });
+                const savedUserInfo = await newUserInfo.save()
+                    .then(user => {
+                        const newUser = User.findOneAndUpdate({ email }, { addedExtraInfo: true }, { new: true });
+                        console.log('UserInfo recorded succefully');
+                        res.redirect('/dashboard');
+                    })
+                    .catch(err => console.log(err));
+                    
+            }
+        } 
+        
+        if(errors.length > 0) {
+            res.send(errors);
         }
     }
 };

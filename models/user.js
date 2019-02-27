@@ -24,6 +24,11 @@ const userSchema = new Schema({
         default: false,
         required: true
     },
+    addedExtraInfo: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
     randomHash: {
         type: String,
         required: true,

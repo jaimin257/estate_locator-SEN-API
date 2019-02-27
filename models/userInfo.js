@@ -19,16 +19,7 @@ const userInfoSchema = new Schema({
     mobileno: {
         type: String,
     },
-    telno: {
-        type: String,
-    },
-    adr_line_1: {
-        type: String,
-    },
-    adr_line_2: {
-        type: String,
-    },
-    adr_line_3: {
+    address: {
         type: String,
     },
     country: {
@@ -46,7 +37,7 @@ const userInfoSchema = new Schema({
     city: {
         type: String,
     },
-    adr_pincode: {
+    pincode: {
         type: String,
     }
 });

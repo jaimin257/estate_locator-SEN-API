@@ -17,19 +17,38 @@ router.route('/register')
         AccountController.register
     );
 
-// Login Handle
-router.post('/logIn', (req, res, next) => {
+// Registeration step2
+router.route('/register/step2')
+    .post(
+        passport.authenticate('local', {
+            failureRedirect: '/account/register/step2'
+        }),
+        AccountController.registerStep2
+    );
 
-    passport.authenticate('local', {
-        successRedirect: '/dashboard',
-        failureRedirect: '/account/logIn'
-    })(req,res,next);
-});
+
+// Login Handle
+// router.post('/logIn', (req, res, next) => {
+
+//     passport.authenticate('local', {
+//         successRedirect: '/dashboard',
+//         failureRedirect: '/account/logIn'
+//     })(req,res,next);
+// });
+
+router.route('/logIn')
+    .post(
+        passport.authenticate('local', {
+            failureRedirect: '/account/logIn'
+        }),
+        AccountController.signIn
+);
 
 // Verify
 router.route('/verify/:email')
     .get(
         AccountController.verify
 );
+
 
 module.exports = router; 
