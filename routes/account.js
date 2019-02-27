@@ -26,4 +26,10 @@ router.post('/logIn', (req, res, next) => {
     })(req,res,next);
 });
 
+// Verify
+router.route('/verify/:email')
+    .get(
+        AccountController.verify
+);
+
 module.exports = router; 

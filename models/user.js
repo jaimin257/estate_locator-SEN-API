@@ -4,51 +4,30 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
 
     /* User applied field */
-    /*
-    name : {
-        firstName: {
-            type: String,
-        },
-        middleName: {
-            type: String,
-        },
-        lastName: {
-            type: String,
-        },
-    },
-    */
-    firstName : {
-        type: String,
-        required: true
-    },
-    lastName : {
-        type: String,
-        required: true,
-    },
-    primaryEmail: {
+    email: {
         type: String,
         required: true,
         unique: true, 
-    },
-    contactNo: {
-        type: String,
-        required: true,
     },
     password: {
         type: String,
         required: true,
     }, 
-    gender: {
-        type: String,
-        required: true,
-    },
-    
 
     /* Server added field */
     createdOn: {
         type: Date,
         required: true,
     },
+    verified: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
+    randomHash: {
+        type: String,
+        required: true,
+    }
   /*
     wishList: {
         type: Schema.Types.ObjectId,

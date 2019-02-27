@@ -2,50 +2,48 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userInfoSchema = new Schema({
-    
-    user_first_name: {
+    name : {
+        firstName: {
+            type: String,
+        },
+        middleName: {
+            type: String,
+        },
+        lastName: {
+            type: String,
+        },
+    },
+    sex: {
         type: String,
     },
-    user_middle_name: {
+    mobileno: {
         type: String,
     },
-    user_last_name: {
+    telno: {
         type: String,
     },
-    user_sex: {
+    adr_line_1: {
         type: String,
     },
-    user_email_id: {
+    adr_line_2: {
         type: String,
     },
-    user_mobileno: {
+    adr_line_3: {
         type: String,
     },
-    user_telno: {
-        type: String,
-    },
-    user_adr_line_1: {
-        type: String,
-    },
-    user_adr_line_2: {
-        type: String,
-    },
-    user_adr_line_3: {
-        type: String,
-    },
-    user_country: {
+    country: {
         type: String,
         required: true,
     },
-    user_state: {
+    state: {
         type: String,
         required: true,
     },
-    user_district: {
+    district: {
         type: String,
         required: true,
     },
-    user_city: {
+    city: {
         type: String,
     },
     adr_pincode: {
