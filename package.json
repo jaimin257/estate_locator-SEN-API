@@ -1,0 +1,39 @@
+{
+  "name": "estate_locator-SEN-API",
+  "version": "1.0.0",
+  "description": "It's our official repository for software engineering project(Estate locator).",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaimin257/estate_locator-SEN-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaimin257/estate_locator-SEN-/issues"
+  },
+  "homepage": "https://github.com/jaimin257/estate_locator-SEN-#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-ejs-layouts": "^2.5.0",
+    "express-session": "^1.15.6",
+    "mongoose": "^5.4.15",
+    "mustache": "^3.0.1",
+    "nodemailer": "^5.1.1",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "randomstring": "^1.1.5",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}

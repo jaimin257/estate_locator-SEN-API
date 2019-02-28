@@ -1,0 +1,10 @@
+{
+    "signUp": {
+        "templateId": "5bhfnj67kcndhrknz25gdhctn",
+        "templateName": "Sign up",
+        "subject": "Verify your Email account",
+        "cc": [],
+        "bcc": [],
+        "body": "Welcome to Estate Locator - DAIICT! <br><br> Please click on the below mentioned link to verify your email.<br><a href={{link}}>Click here to verify</a>"
+    }
+}
