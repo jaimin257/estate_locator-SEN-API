@@ -32,7 +32,11 @@ const userSchema = new Schema({
     randomHash: {
         type: String,
         required: true,
-    }
+    },
+    properties: [{
+        type: Schema.Types.ObjectId,
+        ref: property
+    }],
   /*
     wishList: {
         type: Schema.Types.ObjectId,

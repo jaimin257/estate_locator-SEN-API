@@ -138,15 +138,16 @@ module.exports = {
         if(!userFound) {
             errors.push({ msg: 'Email not registered.' });
         } else {
-            if(!userFound.verified) {
+          /*  if(!userFound.verified) {
                 errors.push({ msg: 'Email not verified yet' });
             } else if(!userFound.addedExtraInfo) {
                 res.redirect('/register/step2');
             }
             else {
+        */ 
                 console.log('Succesfully logged in');
                 res.redirect('/dashboard');
-            }
+        //    }
         }
         
         if(errors.length > 0) {
