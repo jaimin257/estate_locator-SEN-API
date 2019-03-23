@@ -38,9 +38,12 @@ const sendVerificationMail = async (email, link) => {
 
 module.exports = {
     register: async (req, res, next) => {
+        console.log("register function");
         const {email, password, password2} = req.body;
         let errors = [];
     
+        console.log(email + ' ' + password);
+
         //Check required fields
         if(!email || !password || !password2) {
             errors.push({ msg: 'Please fill in all fields' });
@@ -63,11 +66,17 @@ module.exports = {
             res.send(errors);
         } else {
             console.log('validation passed');
-            
+            const userFoundFlag = 0;
             // validation passed
-            const userFound = await User.findOne({ email: email });    
+            try{
+                const userFound = await User.findOne({ email: email });    
+                userFoundFlag = 1;
+            }
+            catch(error){
+                console.log(error);
+            }
 
-            if(userFound) {
+            if(userFoundFlag) {
                 if(userFound.verified) {
                     if(userFound.addedExtraInfo) {
                         errors.push({ msg: 'User Already Exist' });
@@ -114,6 +123,7 @@ module.exports = {
             }
         }
     },
+
     verify: async (req, res, next) => {
         const { email } = req.params;
         const user = await User.findOne({ email });
@@ -128,12 +138,14 @@ module.exports = {
             res.redirect('/logIn');
         } else {
             console.log('Something went wrong');
-        }
+        }   
     },
     signIn: async (req, res, next) => {
+        console.log(username+' '+password);
         const { email, password } = req.body;
         const userFound = await User.findOne({ email });
         let errors = [];
+
 
         if(!userFound) {
             errors.push({ msg: 'Email not registered.' });
