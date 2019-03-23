@@ -1,8 +1,11 @@
+const errorMessages = require('../configuration/errors');
 const User = require('../models/user');
 const UserInfo = require('../models/userInfo');
 const randomstring = require('randomstring');
 const mustache = require('mustache');
 const bcrypt = require('bcryptjs');
+const httpStatusCodes = require('http-status-codes');
+
 
 const passport = require('../configuration/passport');
 
@@ -43,75 +46,92 @@ module.exports = {
     
         //Check required fields
         if(!email || !password || !password2) {
-            errors.push({ msg: 'Please fill in all fields' });
+//            errors.push({ msg: 'Please fill in all fields' });
+            res.status(httpStatusCodes.PRECONDITION_FAILED)
+                .send(errorMessages.requiredFieldsEmpty);
         } else {
             // Check if passwords match
             if(password !== password2) {
-                errors.push({ msg: 'Passwords do not match' });
+//                errors.push({ msg: 'Passwords do not match' });
+                res.status(httpStatusCodes.PRECONDITION_FAILED)
+                    .send(errorMessages.passwordNotMatching);
             }
 
             // Check pass length
             if(password.length < 6) {
-                errors.push({ msg: 'Password should be at least 6 characters' });
+//                errors.push({ msg: 'Password should be at least 6 characters' });
+                res.status(httpStatusCodes.PRECONDITION_FAILED)
+                    .send(errorMessages.passwordLengthNotEnough);
             }
 
             // Verify contact no... is it number? is it valid number?
             
         }
     
-        if(errors.length > 0) {
-            res.send(errors);
-        } else {
-            console.log('validation passed');
-            
-            // validation passed
-            const userFound = await User.findOne({ email: email });    
+        console.log('validation passed');
+        
+        // validation passed
+        const userFound = await User.findOne({ email: email });    
 
-            if(userFound) {
-                if(userFound.verified) {
-                    if(userFound.addedExtraInfo) {
-                        errors.push({ msg: 'User Already Exist' });
-                    } else {
-                        res.redirect('/register/step2');
-                    }
+        if(userFound) {
+            if(userFound.verified) {
+                if(userFound.addedExtraInfo) {
+//                    errors.push({ msg: 'User Already Exist' });
+                    res.status(httpStatusCodes.UNAUTHORIZED)
+                        .send(errorMessages.userAlreadyExist);
                 } else {
-                    errors.push({ msg: 'USer has not yet verified his/her email address. Please verify your email.' });
+                    res.redirect('/register/step2');
                 }
-
-                res.send(errors);
             } else {
-                res.send('Welcome to estate locator');
-
-                const randomHash = randomstring.generate();
-                const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
-                const createdOn = new Date();
-                const newUser = new User({
-                    email,
-                    password,
-                    createdOn,
-                    randomHash,
-                });
-
-                // Hash password
-                bcrypt.genSalt(10, (err, salt) => 
-                    bcrypt.hash(newUser.password, salt, (err, hash) => {
-                        if(err) throw err;
-
-                        // Set password to hashed value
-                        newUser.password = hash;
-
-                        // save user
-                        sendVerificationMail(email,link)
-                            .then(Response => {
-                                newUser.save()
-                                .then(user => {
-                                    console.log('User Registered');
-                                })
-                                .catch(err => console.log(err));
-                            })
-                            .catch(err => console.log(err));
-                }));
+//                errors.push({ msg: 'USer has not yet verified his/her email address. Please verify your email.' });
+                res.status(httpStatusCodes.UNAUTHORIZED)
+                        .send(errorMessages.userNotVerified);
             }
+
+//            res.send(errors);
+        } else {
+            res.send('Welcome to estate locator');
+
+            const randomHash = randomstring.generate();
+            const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
+            const createdOn = new Date();
+            const newUser = new User({
+                email,
+                password,
+                createdOn,
+                randomHash,
+            });
+
+            // Hash password
+            bcrypt.genSalt(10, (err, salt) => 
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if(err) throw err;
+
+                    // Set password to hashed value
+                    newUser.password = hash;
+
+                    // save user
+                    sendVerificationMail(email,link)
+                        .then(Response => {
+                            const savedUser = await newUser.save()
+                            .then(user => {
+                                console.log('User Registered');
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(errorMessages.errorSavingUser);
+                            });
+
+                            res.status(httpStatusCodes.OK)
+                                    .json({ prop: savedUser});
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(httpStatusCodes.FORBIDDEN)
+                                .send(errorMessages.emailNotSent);
+                        });
+            }));
         }
     },
     verify: async (req, res, next) => {
@@ -119,8 +139,7 @@ module.exports = {
         const user = await User.findOne({ email });
 
         if(!user) {
-            console.log('hey hye'); 
-            res.end('<h2>This link has been used already and is now invalid.</h2>');
+            res.send('<h2>This link has been used already and is now invalid.</h2>');
         } 
         else if (req.query.id === user.randomHash) {
             console.log('user email address verified succefully');
@@ -128,15 +147,19 @@ module.exports = {
             res.redirect('/logIn');
         } else {
             console.log('Something went wrong');
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(<h2>Something went wrong! Maybe love is fake!!!</h2>);
         }
     },
     signIn: async (req, res, next) => {
         const { email, password } = req.body;
         const userFound = await User.findOne({ email });
-        let errors = [];
+//        let errors = [];
 
         if(!userFound) {
-            errors.push({ msg: 'Email not registered.' });
+//            errors.push({ msg: 'Email not registered.' });
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.userNotRegistered);
         } else {
           /*  if(!userFound.verified) {
                 errors.push({ msg: 'Email not verified yet' });
@@ -150,23 +173,29 @@ module.exports = {
         //    }
         }
         
-        if(errors.length > 0) {
-            res.send(errors);
-        }
+        // if(errors.length > 0) {
+        //     res.send(errors);
+        // }
 
     },
     registerStep2: async (req, res, next) => {
         const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
         const userFound = await User.findOne({ email });
-        let errors = [];
+//        let errors = [];
 
         if(!userFound) {
-            errors.push({ msg: 'Email not registered.' });
+//            errors.push({ msg: 'Email not registered.' });
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.userNotRegistered);
         } else {
             if(!userFound.verified) {
-                errors.push({ msg: 'Email not verified yet' });
+//                errors.push({ msg: 'Email not verified yet' });
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.userNotVerified);
             } else if(userFound.addedExtraInfo) {
-                errors.push({ msg: 'Details already given.'});
+//                errors.push({ msg: 'Details already given.'});
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.extraInfoAlreadyGiven);
                 //res.redirect('/account/signIn');
             } else {
                 const newUserInfo = new UserInfo({
@@ -186,14 +215,17 @@ module.exports = {
                         console.log('UserInfo recorded succefully');
                         res.redirect('/dashboard');
                     })
-                    .catch(err => console.log(err));
-                    
+                    .catch(err => {
+                        console.log(err);
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(errorMessages.errorSavingUserInfo);
+                    });
             }
         } 
         
-        if(errors.length > 0) {
-            res.send(errors);
-        }
+        // if(errors.length > 0) {
+        //     res.send(errors);
+        // }
     }
 };
 
