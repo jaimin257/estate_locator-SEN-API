@@ -7,7 +7,7 @@ const PropController = require('../controllers/property');
 // Get your properties
 router.route('/')
     .get(
-        PropController.myProps
+        PropController.getMyProps
     );
 
 // Get all Properties
@@ -39,3 +39,5 @@ router.route('/updateProp/:propId')
     .patch(
         PropController.updateProp
     );
+
+    module.exports = router; 

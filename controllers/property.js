@@ -1,10 +1,10 @@
 const httpStatusCodes = require('http-status-codes');
-const errorMessages = require('../configuration/errors');
+const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
 
 
 module.exports = {
-    getMyProp: async (req, res, next) => {
+    getMyProps: async (req, res, next) => {
         const { user } = req;
 
         const foundProps = await Prop.find({ seller: user })
@@ -33,7 +33,7 @@ module.exports = {
         }
     },
 
-    getAllProp: async (req, res, next) => {
+    getAllProps: async (req, res, next) => {
 //        const { user } = req;
 
         await Prop.find({})

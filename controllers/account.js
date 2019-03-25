@@ -1,4 +1,4 @@
-const errorMessages = require('../configuration/errors');
+const errorMessages = require('../configuration/error');
 const User = require('../models/user');
 const UserInfo = require('../models/userInfo');
 const randomstring = require('randomstring');
@@ -113,7 +113,7 @@ module.exports = {
                     // save user
                     sendVerificationMail(email,link)
                         .then(Response => {
-                            const savedUser = await newUser.save()
+                            const savedUser = newUser.save()
                             .then(user => {
                                 console.log('User Registered');
                             })
@@ -148,7 +148,7 @@ module.exports = {
         } else {
             console.log('Something went wrong');
             res.status(httpStatusCodes.FORBIDDEN)
-                .send(<h2>Something went wrong! Maybe love is fake!!!</h2>);
+                .send('<h2>Something went wrong! Maybe love is fake!!!</h2>');
         }
     },
     signIn: async (req, res, next) => {
