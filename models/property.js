@@ -3,6 +3,8 @@ const { Schema } = mongoose;
 
 const propertySchema = Schema({
 
+// User Provided Fields...
+    // Basic detail
     propertyName: {
         type: String,
         required: true,
@@ -21,9 +23,38 @@ const propertySchema = Schema({
     },
     seller: {
         type: Schema.Types.ObjectId,
-        ref: 'seller', 
-    }
-    ,
+        ref: 'user', 
+    },
+
+    // Property Info
+    property_type: {
+        type: String,
+        required: true,
+    },
+    property_amount: {
+        type: String,
+        required: true,
+    },
+    contract_type: {
+        type: String,
+        required: true,
+    },
+    floor: {
+        type: String,
+        required: true,
+    },
+    carpet_area: {
+        type: String,
+        required: true,
+    },
+    adderess: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
 
     /* Server added field */
     createdOn: {
@@ -32,10 +63,6 @@ const propertySchema = Schema({
     },
     lastModified: {
         type: Date,
-        required: true,
-    },
-    description: {
-        type: String,
         required: true,
     }
 });
