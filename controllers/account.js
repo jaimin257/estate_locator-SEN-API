@@ -1,13 +1,22 @@
 const errorMessages = require('../configuration/error');
 const User = require('../models/user');
 const UserInfo = require('../models/userInfo');
+const passport = require('../configuration/passport');
+
 const randomstring = require('randomstring');
 const mustache = require('mustache');
 const bcrypt = require('bcryptjs');
 const httpStatusCodes = require('http-status-codes');
+const JWT = require(`jsonwebtoken`);
 
 
-const passport = require('../configuration/passport');
+const {
+    JWT_SECRET,
+    JWT_EXPIRY_TIME,
+    JWT_ISSUER,
+    cookiesName,
+} = require('../configuration');
+
 
 // Mail setup
 const { smtpTransport } = require('../configuration/mail'),
@@ -36,6 +45,16 @@ const sendVerificationMail = async (email, link) => {
         .catch(err => console.log(err));
 
     console.log('Verification Link sent');
+};
+
+//sign a new token
+const signToken = emailId => {
+    return JWT.sign({
+        iss: JWT_ISSUER,
+        sub: emailId,
+        iat: new Date().getTime(),
+        exp: new Date().setDate(new Date().getDate() + JWT_EXPIRY_TIME),
+    }, JWT_SECRET);
 };
 
 
@@ -77,14 +96,14 @@ module.exports = {
             if(userFound.verified) {
                 if(userFound.addedExtraInfo) {
 //                    errors.push({ msg: 'User Already Exist' });
-                    res.status(httpStatusCodes.UNAUTHORIZED)
+                    res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userAlreadyExist);
                 } else {
                     res.redirect('/register/step2');
                 }
             } else {
 //                errors.push({ msg: 'USer has not yet verified his/her email address. Please verify your email.' });
-                res.status(httpStatusCodes.UNAUTHORIZED)
+                res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotVerified);
             }
 
@@ -109,31 +128,32 @@ module.exports = {
 
                     // Set password to hashed value
                     newUser.password = hash;
-
-                    // save user
-                    sendVerificationMail(email,link)
-                        .then(Response => {
-                            const savedUser = newUser.save()
-                            .then(user => {
-                                console.log('User Registered');
-                            })
-                            .catch(err => {
-                                console.log(err);
-                                res.status(httpStatusCodes.FORBIDDEN)
-                                    .send(errorMessages.errorSavingUser);
-                            });
-
-                            res.status(httpStatusCodes.OK)
-                                    .json({ prop: savedUser});
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.status(httpStatusCodes.FORBIDDEN)
-                                .send(errorMessages.emailNotSent);
-                        });
             }));
+
+            // save user
+            sendVerificationMail(email,link)
+            .then(Response => {
+                    const savedUser = newUser.save()
+                    .then(user => {
+                        console.log('User Registered');
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.errorSavingUser);
+                });
+
+                res.status(httpStatusCodes.OK)
+                        .json({ prop: savedUser});
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.emailNotSent);
+            });
         }
     },
+
     verify: async (req, res, next) => {
         const { email } = req.params;
         const user = await User.findOne({ email });
@@ -151,8 +171,19 @@ module.exports = {
                 .send('<h2>Something went wrong! Maybe love is fake!!!</h2>');
         }
     },
-    signIn: async (req, res, next) => {
-        const { email, password } = req.body;
+
+    logIn: async (req, res, next) => {
+
+        console.log('Reached here.');
+
+        const { email,password } = req.body;
+
+        const token = signToken(email);
+
+
+        console.log('email : ');
+        console.log(email);
+
         const userFound = await User.findOne({ email });
 //        let errors = [];
 
@@ -168,8 +199,16 @@ module.exports = {
             }
             else {
         */ 
-                console.log('Succesfully logged in');
-                res.redirect('/dashboard');
+            
+        res.cookie(cookiesName.jwt, token, {
+                httpOnly: false,
+                expires: new Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
+            })
+                .status(httpStatusCodes.OK)
+        .json({ user: userFound });
+
+              //  console.log('Succesfully logged in');
+               // res.redirect('/dashboard');
         //    }
         }
         
@@ -178,6 +217,13 @@ module.exports = {
         // }
 
     },
+
+    logOut: async (req, res, next) => {
+        res.clearCookie('jwt');
+        res.status(httpStatusCodes.OK)
+            .json({});
+    },
+
     registerStep2: async (req, res, next) => {
         const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
         const userFound = await User.findOne({ email });
