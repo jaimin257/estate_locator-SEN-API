@@ -41,9 +41,12 @@ const sendVerificationMail = async (email, link) => {
 
 module.exports = {
     register: async (req, res, next) => {
+        console.log("register function");
         const {email, password, password2} = req.body;
         let errors = [];
     
+        console.log(email + ' ' + password);
+
         //Check required fields
         if(!email || !password || !password2) {
 //            errors.push({ msg: 'Please fill in all fields' });
@@ -134,6 +137,7 @@ module.exports = {
             }));
         }
     },
+
     verify: async (req, res, next) => {
         const { email } = req.params;
         const user = await User.findOne({ email });
@@ -142,7 +146,7 @@ module.exports = {
             res.send('<h2>This link has been used already and is now invalid.</h2>');
         } 
         else if (req.query.id === user.randomHash) {
-            console.log('user email address verified succefully');
+            console.log('use r email address verified succefully');
             const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
             res.redirect('/logIn');
         } else {
@@ -152,9 +156,12 @@ module.exports = {
         }
     },
     signIn: async (req, res, next) => {
+        console.log("signIn going on..");
         const { email, password } = req.body;
         const userFound = await User.findOne({ email });
 //        let errors = [];
+
+        console.log(email+' '+password);
 
         if(!userFound) {
 //            errors.push({ msg: 'Email not registered.' });
@@ -169,7 +176,7 @@ module.exports = {
             else {
         */ 
                 console.log('Succesfully logged in');
-                res.redirect('/dashboard');
+                res.send({login: true});
         //    }
         }
         
