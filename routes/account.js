@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const passportConf = require('../passport');
 
 
 const AccountController = require('../controllers/account');
@@ -36,12 +37,18 @@ router.route('/register/step2')
 //     })(req,res,next);
 // });
 
+// Login Handle
 router.route('/logIn')
     .post(
-        passport.authenticate('local', {
-            failureRedirect: '/account/logIn'
-        }),
-        AccountController.signIn
+        passport.authenticate('local', { session: false }),
+        AccountController.logIn
+);
+
+// LogOut Handle
+router.route('/logOut')
+    .get(
+        passport.authenticate('jwt', { session: false }),
+        AccountController.logOut
 );
 
 // Verify
