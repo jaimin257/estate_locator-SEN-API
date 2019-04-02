@@ -57,7 +57,6 @@ const signToken = emailId => {
     }, JWT_SECRET);
 };
 
-
 module.exports = {
     register: async (req, res, next) => {
         console.log("register function");
@@ -223,11 +222,25 @@ module.exports = {
 
     },
 
-    logOut: async (req, res, next) => {
-        res.clearCookie('jwt');
-        res.status(httpStatusCodes.OK)
-            .json({});
-    },
+    // logOut: async (req, res, next) => {
+
+    //     //req = checkToken(req,res,next);
+
+    //     JWT.verify(req.token, JWT_SECRET, (err, authorizedData) => {
+    //         console.log('nooooooo......');
+    //         console.log(req.token);
+    //         if(err){
+    //             //If error send Forbidden (403)
+    //             console.log('ERROR: Could not connect to the protected route');
+    //             res.sendStatus(403);
+    //         } else {
+    //             //If token is successfully verified, we can send the autorized data 
+    //             res.clearCookie('jwt');
+    //             res.status(httpStatusCodes.OK)
+    //                 .json({});
+    //         }
+    //     })
+    // },
 
     registerStep2: async (req, res, next) => {
         const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;

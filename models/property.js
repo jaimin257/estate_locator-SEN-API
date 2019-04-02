@@ -50,14 +50,16 @@ const propertySchema = Schema({
     adderess: {
         street: {
             type: String,
+            required: true,
         },
         locality: {
             type: String,
+            required: true,
         },
         city: {
             type: String,
+            required: true,
         },
-        required: true,
     },
     description: {
         type: String,

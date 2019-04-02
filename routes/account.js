@@ -2,7 +2,14 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const passportConf = require('../passport');
+const JWT = require(`jsonwebtoken`);
 
+const {
+    JWT_SECRET,
+    JWT_EXPIRY_TIME,
+    JWT_ISSUER,
+    cookiesName,
+} = require('../configuration');
 
 const AccountController = require('../controllers/account');
 
@@ -27,7 +34,6 @@ router.route('/register/step2')
         AccountController.registerStep2
     );
 
-
 // Login Handle
 // router.post('/logIn', (req, res, next) => {
 
@@ -44,12 +50,14 @@ router.route('/logIn')
         AccountController.logIn
 );
 
+router.get('/logOut',passportConf.checkToken,passportConf.jwtVerifier);
+
 // LogOut Handle
-router.route('/logOut')
-    .get(
-        passport.authenticate('jwt', { session: false }),
-        AccountController.logOut
-);
+// router.route('/logOut')
+//     .get(
+//         //passport.authenticate('jwt', { session: false }),
+//         AccountController.logOut
+// );
 
 // Verify
 router.route('/verify/:email')
