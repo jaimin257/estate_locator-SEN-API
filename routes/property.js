@@ -28,7 +28,7 @@ router.route('/addProp')
 
 // Remove Property
 router.route('/removeProp')
-    .patch(
+    .post(
         passportConf.checkToken,
         passportConf.jwtVerifier,
         PropController.removeProp
@@ -36,7 +36,7 @@ router.route('/removeProp')
 
 // Update property
 router.route('/updateProp')
-    .patch(
+    .post(
         passportConf.checkToken,
         passportConf.jwtVerifier,
         PropController.updateProp
@@ -44,7 +44,7 @@ router.route('/updateProp')
 
 // Get specific Property
 router.route('/getThisProp')
-    .patch(
+    .post(
         PropController.getThisProp
     );
 

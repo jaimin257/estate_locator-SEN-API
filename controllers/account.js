@@ -96,7 +96,8 @@ module.exports = {
                     res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userAlreadyExist);
                 } else {
-                    res.redirect('/register/step2');
+                    //res.redirect('/register/step2');
+                    /******** Redirect to   '/register/step2'  *********  */
                 }
             } else {
                 res.status(httpStatusCodes.FORBIDDEN)
@@ -189,12 +190,20 @@ module.exports = {
             else {
             */
             
-            res.cookie(cookiesName.jwt, token, {
-                    httpOnly: false,
-                    expires: new Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
-                })
-                    .status(httpStatusCodes.OK)
-            .json({ user: userFound });
+            res.status(httpStatusCodes.OK)
+            .json({
+                cname1: 'cookiesNamekwt',
+                cvalue1: token,
+                cexpire: Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
+                login : userFound
+            });
+
+            // res.cookie(cookiesName.jwt, token, {
+            //         httpOnly: false,
+            //         expires: new Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
+            //     })
+            //         .status(httpStatusCodes.OK)
+            // .json({ user: userFound });
 
         //    }
         }
