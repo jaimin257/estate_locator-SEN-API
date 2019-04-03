@@ -59,6 +59,5 @@ userSchema.methods.isValid = async function (newPassword) {
     }
 };
 
-
 const User = mongoose.model('user',userSchema);
 module.exports = User;

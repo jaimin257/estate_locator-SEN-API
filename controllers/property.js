@@ -5,7 +5,9 @@ const Prop = require('../models/property');
 
 module.exports = {
     getMyProps: async (req, res, next) => {
-        const { user } = req;
+        const { user } = req.body;
+
+        console.log('getMyProps');
 
         const foundProps = await Prop.find({ seller: user })
             .then(function (props) {
@@ -18,9 +20,11 @@ module.exports = {
             });
     },
 
-    getProp: async (req, res, next) => {
-        const { user } = req;
-        const { propId } = req.params;
+    getThisProp: async (req, res, next) => {
+        //const { user } = req;
+        const { propId } = req.body;
+
+        console.log('getThisProp : '+propId);
 
         const foundProp = await Prop.findById(propId);
 
@@ -36,6 +40,8 @@ module.exports = {
     getAllProps: async (req, res, next) => {
 //        const { user } = req;
 
+        console.log('getAllProps...');
+
         await Prop.find({})
             .then(function (props) {
                 res.status(httpStatusCodes.OK)
@@ -48,10 +54,12 @@ module.exports = {
     },
 
     addProp: async (req, res, next) => {
-        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, adderess, description} = req.body;
+        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+
+        console.log('addProp...');
 
         // Check required Fields
-        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !adderess || !description) {
+        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
@@ -76,7 +84,9 @@ module.exports = {
             contract_type, 
             floor, 
             carpet_area, 
-            adderess,
+            //address,
+            state,
+            city,
             description,
             createdOn,
             lastModified,
@@ -84,10 +94,10 @@ module.exports = {
 
         // Adding property
         const addedProp = await newProp.save()
-            .then(newProp => {
-                console.log('Property added');
+            .then(savedProp => {
+                console.log('Property added'); 
                 res.status(httpStatusCodes.CREATED)
-                    .json({ prop: addedProp });
+                    .json({ prop: savedProp });
             })
             .catch(err => {
                 console.log(err);
@@ -96,8 +106,10 @@ module.exports = {
             });
     },
     removeProp: async (req, res, next) => {
-        const {user} = req;
-        const {propId} = req.params;
+        const {user, propId} = req.body;
+//        const {propId} = req.params.propId;
+
+        console.log('removeProp : '+propId);
 
         // May need to perform some verifications such as user, etc..
 
@@ -116,6 +128,8 @@ module.exports = {
     updateProp: async (req, res, next) => {
         const {userId, propId} = req;
         const propUpdateAttr = req.value.body;
+
+        console.log('updateProp : '+propId);
 
         propUpdateAttr.lastModified = new Date();
         

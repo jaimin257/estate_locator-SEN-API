@@ -32,12 +32,14 @@ module.exports = {
                 res.sendStatus(httpStatusCodes.FORBIDDEN);
             } else {
                 //If token is successfully verified, we can send the autorized data 
-                res.clearCookie('jwt');
-                res.status(httpStatusCodes.OK)
-                    .json({});
                 console.log('SUCCESS: Connected to protected route');
+                next();
             }
         })
+    },
+    just: async (req,res,next) => {
+        console.log('okaiiii');
+        const propidd = req.params;
     },
 };
 
@@ -48,10 +50,10 @@ passport.use(new LocalStrategy({
 }, async (email, password, done) => {
 
     try {
+        console.log('LocalStrategy');
         //find the user with given email
         const user = await User.findOne({ email });
 
-        console.log('hey hey');
         //if not handle it
         if (!user) {
             return done(null, false);

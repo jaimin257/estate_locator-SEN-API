@@ -4,21 +4,8 @@ const { logger } = require('../configuration/logger');
 const mailAccountEmailId = require('./keys').MAIL_USER;
 const mailAccountPassword = require('./keys').MAIL_PASS;
 
-/*
-    SMTP server configuration
-*/
 
-// var smtpConfig = {
-//     service: 'gmail',
-//     host: 'smtp.gmail.com',
-//     port: 465,
-//     secure: true, // use SSL
-//     auth: {
-//         user: mailAccountEmailId,
-//         pass: mailAccountPassword
-//     }
-// };
-
+/* --------------- SMTP server configuration ------------------*/
 
 var smtpConfig = {
     host: 'webmail.daiict.ac.in',
@@ -44,6 +31,8 @@ smtpTransport.verify(function (error, success) {
     }
 });
 
+
+// Sending mail...
 const sendMail = async (toId, cc, bcc, subject, html, text) => {
     const info = await smtpTransport.sendMail({
         from: mailAccountEmailId,

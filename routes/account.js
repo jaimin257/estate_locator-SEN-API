@@ -2,22 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const passportConf = require('../passport');
-const JWT = require(`jsonwebtoken`);
-
-const {
-    JWT_SECRET,
-    JWT_EXPIRY_TIME,
-    JWT_ISSUER,
-    cookiesName,
-} = require('../configuration');
 
 const AccountController = require('../controllers/account');
-
-// Login Page
-router.get('/logIn',(req,res) => res.send('Login'));
-
-// Register Page
-router.get('/register', (req,res) => res.send('Register'));
 
 // Register Handle
 router.route('/register')
@@ -35,35 +21,23 @@ router.route('/register/step2')
     );
 
 // Login Handle
-// router.post('/logIn', (req, res, next) => {
-
-//     passport.authenticate('local', {
-//         successRedirect: '/dashboard',
-//         failureRedirect: '/account/logIn'
-//     })(req,res,next);
-// });
-
-// Login Handle
 router.route('/logIn')
     .post(
         passport.authenticate('local', { session: false }),
         AccountController.logIn
 );
 
-router.get('/logOut',passportConf.checkToken,passportConf.jwtVerifier);
-
-// LogOut Handle
-// router.route('/logOut')
-//     .get(
-//         //passport.authenticate('jwt', { session: false }),
-//         AccountController.logOut
-// );
+router.route('/logOut')
+    .get(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
+        AccountController.logOut
+);
 
 // Verify
 router.route('/verify/:email')
     .get(
         AccountController.verify
 );
-
 
 module.exports = router; 
