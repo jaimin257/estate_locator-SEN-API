@@ -125,8 +125,14 @@ module.exports = {
                     newUser.password = hash;
             }));
 
+            var strtmp = email;
+            var str = strtmp.substring(1,strtmp.length-1);
+            str = '"<' + str + '>"';
+            const editedEmail = JSON.parse(str);
+            console.log(editedEmail);
+
             // save user
-            sendVerificationMail(email,link)
+            await sendVerificationMail(editedEmail,link)
             .then(Response => {
                     const savedUser = newUser.save()
                     .then(user => {
