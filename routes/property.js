@@ -28,7 +28,7 @@ router.route('/addProp')
 
 // Remove Property
 router.route('/removeProp')
-    .post(
+    .delete(
         passportConf.checkToken,
         passportConf.jwtVerifier,
         PropController.removeProp
@@ -44,8 +44,13 @@ router.route('/updateProp')
 
 // Get specific Property
 router.route('/getThisProp')
-    .post(
+    .get(
         PropController.getThisProp
+    );
+
+router.route('/searchProp')
+    .post(
+        PropController.searchProp
     );
 
 module.exports = router; 

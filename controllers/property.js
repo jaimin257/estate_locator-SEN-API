@@ -21,7 +21,7 @@ module.exports = {
     },
 
     getThisProp: async (req, res, next) => {
-        const { propId } = req.body;
+        const { propId } = req.query;
 
         console.log('getThisProp : '+propId);
 
@@ -105,7 +105,7 @@ module.exports = {
             });
     },
     removeProp: async (req, res, next) => {
-        const {propId} = req.body;
+        const {propId} = req.query;
       //  const {propId} = req.params;
 
         console.log('removeProp : '+propId);
@@ -180,5 +180,44 @@ module.exports = {
             .catch(err => {
                 console.log(err);
             });
+    },
+
+    searchProp: async (req, res, next) => {
+       // var { searchStr } = req.body;
+      //  console.log(searchStr);
+
+        const foundProps = await Prop.find({
+            "$text": {
+                "$search": req.body.query
+            }
+            },
+            {
+                document: 1,
+                created: 1,
+                _id: 1,
+                textScore: {
+                    $meta: "textScore"
+                }
+            },
+            {
+                sort: {
+                    textScore: {
+                        $meta: "textScore"
+                    }
+                }
+            }
+        );
+        // .toArray(function(err, items) {
+        //     res.send(items);
+        // });
+            
+        if(foundProps != undefined) {
+            res.status(httpStatusCodes.OK)
+                .send(foundProps);
+        } else {
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send('errororro');
+        }
+    
     }
 };
