@@ -1,6 +1,5 @@
 const errorMessages = require('../configuration/error');
 const User = require('../models/user');
-const UserInfo = require('../models/userInfo');
 
 const randomstring = require('randomstring');
 const mustache = require('mustache');
