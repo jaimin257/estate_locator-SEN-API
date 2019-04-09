@@ -183,6 +183,11 @@ module.exports = {
         if(!user) {
             res.send('<h2>This link has been used already and is now invalid.</h2>');
         } 
+        else if(user.verified == true) {
+            console.log('already verified...');
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send('<h2>You are already verified...! Maybe love is fake!!!</h2>');
+        }
         else if (req.query.id === user.randomHash) {
             console.log('use r email address verified succefully');
             const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
@@ -236,7 +241,7 @@ module.exports = {
     },
 
     getUser: async (req, res, next) => {
-        const {userId} = req.query;
+        const {userId} = req.body;
         console.log('getUser : ' +userId);
 
         await User.findById(userId)
@@ -257,7 +262,7 @@ module.exports = {
     },
 
     getAllProps: async (req, res, next) => {
-        const {userId} = req.query;
+        const {userId} = req.body;
         console.log('getAllProps : '+userId);
 
         await Prop.find({seller: userId})
@@ -318,6 +323,55 @@ module.exports = {
                 });
         }
     },
+    addPropToWishlist: async (req,res, next) => {
+        const {userId,propId} = req.body;
+        console.log('Add this property to ' + userId + 'account');
+        if(!userId || !propId ) {
+            res.status(httpStatusCodes.PRECONDITION_FAILED)
+                .send(errorMessages.requiredFieldsEmpty);            
+        } else {
+            // Extra verifications...
+        }
+        console.log('All details for add to wishlist is ok.');
+
+        await User.findById(userId)
+            .then(foundUser => {
+                if(!foundUser){
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+                }
+                else{
+                    console.log(foundUser);
+                    // Check property is already in the list.
+                    var foundProp = foundUser.wishList.find(function(element) {
+                        return element === propId;
+                      });
+                    if(foundProp){
+                        res.status(httpStatusCodes.FORBIDDEN)
+                                .send(errorMessages.propAlreadyExist); 
+                    }
+                    else{
+                        console.log('Add property to wishlist');
+                        foundUser.wishList.push(propId);
+                        User.findByIdAndUpdate(userId,foundUser,{ new: true})
+                            .then(updateUser => {
+                                res.status(httpStatusCodes.OK)
+                                    .json({user: userFound});
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(errorMessages.someThingWentWrong);
+                            })
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.someThingWentWrong);
+            });
+    }
 };
 
 
