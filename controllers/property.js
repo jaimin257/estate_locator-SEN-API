@@ -54,7 +54,7 @@ module.exports = {
 
     addProp: async (req, res, next) => {
         const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
-
+        var {noOfRooms, furnishedType} = req.body;
         console.log('addProp...');
 
         // Check required Fields
@@ -72,6 +72,9 @@ module.exports = {
         const createdOn = new Date();
         const lastModified = new Date();
 
+        if(noOfRooms == undefined)  noOfRooms = 'None';
+        if(furnishedType == undefined)  furnishedType = 'None';
+
         const newProp = new Prop({
             propertyName,
             propertyLocation,
@@ -87,6 +90,8 @@ module.exports = {
             state,
             city,
             description,
+            noOfRooms,
+            furnishedType,
             createdOn,
             lastModified,
         });
@@ -99,7 +104,11 @@ module.exports = {
                 {
                     res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
-                } else {
+                } else if(foundUser.verified == false || foundUser.addedExtraInfo == false) {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userIsNotMature);
+                } 
+                else {
                     console.log(foundUser);
                     newProp.save()
                         .then(savedProp => {
@@ -179,7 +188,7 @@ module.exports = {
             });
     },
     updateProp: async (req, res, next) => {
-        var {propId, propertyName, propertyLocation, constructionStatus, bookingStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+        var {propId, propertyName, propertyLocation, constructionStatus, bookingStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
 
         const foundProp = await Prop.findById(propId)
             .then()
@@ -205,6 +214,8 @@ module.exports = {
             if(state)                   foundProp.state = state;
             if(city)                    foundProp.city = city;
             if(description)             foundProp.description =description;
+            if(noOfRooms)               foundProp.noOfRooms =noOfRooms;
+            if(furnishedType)           foundProp.furnishedType =furnishedType;
     
 //            const lastModified = new Date();
             foundProp.lastModified = new Date();
