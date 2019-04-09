@@ -213,15 +213,6 @@ module.exports = {
                 cexpire: Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
                 login : userFound
             });
-
-            // res.cookie(cookiesName.jwt, token, {
-            //         httpOnly: false,
-            //         expires: new Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
-            //     })
-            //         .status(httpStatusCodes.OK)
-            // .json({ user: userFound });
-
-        //    }
         }
     },
 
@@ -276,47 +267,6 @@ module.exports = {
                     .send(errorMessages.propNotFound);
             });
     },
-
-    // registerStep2: async (req, res, next) => {
-    //     const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
-    //     const userFound = await User.findOne({ email });
-
-    //     if(!userFound) {
-    //         res.status(httpStatusCodes.FORBIDDEN)
-    //             .send(errorMessages.userNotRegistered);
-    //     } else {
-    //         if(!userFound.verified) {
-    //             res.status(httpStatusCodes.FORBIDDEN)
-    //                 .send(errorMessages.userNotVerified);
-    //         } else if(userFound.addedExtraInfo) {
-    //             res.status(httpStatusCodes.FORBIDDEN)
-    //                 .send(errorMessages.extraInfoAlreadyGiven);
-    //         } else {
-    //             const newUserInfo = new UserInfo({
-    //                 name, 
-    //                 sex, 
-    //                 mobileno, 
-    //                 address, 
-    //                 country, 
-    //                 state, 
-    //                 district, 
-    //                 city, 
-    //                 pincode,
-    //             });
-    //             const savedUserInfo = await newUserInfo.save()
-    //                 .then(user => {
-    //                     const newUser = User.findOneAndUpdate({ email }, { addedExtraInfo: true }, { new: true });
-    //                     console.log('UserInfo recorded succefully');
-    //                     res.status(httpStatusCodes.OK);
-    //                 })
-    //                 .catch(err => {
-    //                     console.log(err);
-    //                     res.status(httpStatusCodes.FORBIDDEN)
-    //                         .send(errorMessages.errorSavingUserInfo);
-    //                 });
-    //         }
-    //     } 
-    // }
 };
 
 

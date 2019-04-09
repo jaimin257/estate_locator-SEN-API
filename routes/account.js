@@ -11,15 +11,6 @@ router.route('/register')
         AccountController.register
     );
 
-// Registeration step2
-// router.route('/register/step2')
-//     .post(
-//         passport.authenticate('local', {
-//             failureRedirect: '/account/register/step2'
-//         }),
-//         AccountController.registerStep2
-//     );
-
 // Login Handle
 router.route('/logIn')
     .post(

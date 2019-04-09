@@ -92,6 +92,7 @@ module.exports = {
         });
 
 
+        // Adding Property...
         await User.findById(seller)
             .then(foundUser => {
                 if(!foundUser)
@@ -128,21 +129,6 @@ module.exports = {
                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(err);
             });
-
-        // Adding property
-        // const addedProp = await newProp.save()
-        //     .then(savedProp => {
-        //         console.log('Property added'); 
-        //         res.status(httpStatusCodes.CREATED)
-        //             .json({ prop: savedProp });
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //         res.status(httpStatusCodes.FORBIDDEN)
-        //             .send(err);
-        //     });
-        
-        
     },
     removeProp: async (req, res, next) => {
         const {propId} = req.query;
