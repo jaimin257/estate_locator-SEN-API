@@ -59,15 +59,6 @@ const propertySchema = Schema({
         type: String,
         required: true,
     },
-    noOfRooms: {
-        type: String,
-        required: true,
-    },
-    furnishedType: {
-        type: String,
-        required: true,
-    },
-
 
     /* Server added field */
     createdOn: {

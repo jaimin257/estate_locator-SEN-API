@@ -1,7 +1,6 @@
 module.exports = {
     userNotExist: 'User doesn\'t exist',
     userAlreadyExist: 'User already exist',
-    userIsNotMature: 'User is not mature enough to add property',
     requiredFieldsEmpty: 'One or more of the required are empty',
     passwordNotMatching: 'Passwords do not match',
     passwordLengthNotEnough: 'Password should be at least 6 characters',
@@ -14,7 +13,5 @@ module.exports = {
     userNotRegistered: 'This email address is not registered.',
     extraInfoAlreadyGiven: 'User already gave extra information',
     propNotFound: 'Property not found.',
-    problemFatchingProps: 'Problem Fatching Properties.',
-    propAlreadyExist: 'Property already in wishlist',
-    someThingWentWrong: 'Some thing went wrong'
+    problemFatchingProps: 'Problem Fatching Properties.'
 };

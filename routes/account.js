@@ -26,12 +26,12 @@ router.route('/logOut')
 );
 
 router.route('/getUser')
-    .post(
+    .get(
         AccountController.getUser,
 );
 
 router.route('/getAllProps')
-    .post(
+    .get(
         AccountController.getAllProps
 );
 
@@ -44,11 +44,6 @@ router.route('/updateUser')
 router.route('/verify/:email')
     .get(
         AccountController.verify
-);
-
-router.route('/addToWishList')
-    .post(
-        AccountController.addPropToWishlist
 );
 
 module.exports = router; 
