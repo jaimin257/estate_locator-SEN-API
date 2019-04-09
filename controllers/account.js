@@ -1,5 +1,6 @@
 const errorMessages = require('../configuration/error');
 const User = require('../models/user');
+const Prop = require('../models/property');
 
 const randomstring = require('randomstring');
 const mustache = require('mustache');
@@ -229,6 +230,51 @@ module.exports = {
         res.clearCookie('jwt');
         res.status(httpStatusCodes.OK)
             .json({});
+    },
+
+    getUser: async (req, res, next) => {
+        const {userId} = req.query;
+        console.log('getUser : ' +userId);
+
+        await User.findById(userId)
+            .then(foundUser => {
+                if(!foundUser)
+                {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+                } else {
+                    res.status(httpStatusCodes.OK)
+                        .json({user : foundUser});
+                }
+            })
+            .catch(err => {
+                res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+            });
+    },
+
+    getAllProps: async (req, res, next) => {
+        const {userId} = req.query;
+        console.log('getAllProps : '+userId);
+
+        await Prop.find({seller: userId})
+            .then(foundProps => {
+                if(!foundProps)
+                {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.propNotFound);
+                } else {
+                    console.log("props found");
+                    res.status(httpStatusCodes.OK)
+                        .json({props : foundProps});
+                }
+
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.propNotFound);
+            });
     },
 
     // registerStep2: async (req, res, next) => {

@@ -34,6 +34,16 @@ router.route('/logOut')
         AccountController.logOut
 );
 
+router.route('/getUser')
+    .get(
+        AccountController.getUser,
+);
+
+router.route('/getAllProps')
+    .get(
+        AccountController.getAllProps
+);
+
 // Verify
 router.route('/verify/:email')
     .get(
