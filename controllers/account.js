@@ -60,12 +60,12 @@ const signToken = emailId => {
 module.exports = {
     register: async (req, res, next) => {
         console.log("register function");
-        const {email, password, password2} = req.body;
+        const {email, password, password2, firstName, lastName, sex, mobileno, address, country, state, district, city, pincode} = req.body;
     
         console.log(email + ' ' + password);
 
         //Check required fields
-        if(!email || !password || !password2) {
+        if(!email || !password || !password2 || !firstName || !lastName || !sex || !mobileno || !address || !country || !state || !district || !city || !pincode) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);
         } else {
@@ -114,6 +114,16 @@ module.exports = {
                 password,
                 createdOn,
                 randomHash,
+                firstName, 
+                lastName, 
+                sex, 
+                mobileno, 
+                address, 
+                country, 
+                state, 
+                district, 
+                city, 
+                pincode
             });
 
             // Hash password
@@ -165,7 +175,7 @@ module.exports = {
             console.log('use r email address verified succefully');
             const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
             res.status(httpStatusCodes.OK)
-                .send('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a>SignIn</a>');
+                .send('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
         } else {
             console.log('Something went wrong');
             res.status(httpStatusCodes.FORBIDDEN)
@@ -222,46 +232,46 @@ module.exports = {
             .json({});
     },
 
-    registerStep2: async (req, res, next) => {
-        const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
-        const userFound = await User.findOne({ email });
+    // registerStep2: async (req, res, next) => {
+    //     const {email, password, name, sex, mobileno, address, country, state, district, city, pincode} = req.body;
+    //     const userFound = await User.findOne({ email });
 
-        if(!userFound) {
-            res.status(httpStatusCodes.FORBIDDEN)
-                .send(errorMessages.userNotRegistered);
-        } else {
-            if(!userFound.verified) {
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.userNotVerified);
-            } else if(userFound.addedExtraInfo) {
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.extraInfoAlreadyGiven);
-            } else {
-                const newUserInfo = new UserInfo({
-                    name, 
-                    sex, 
-                    mobileno, 
-                    address, 
-                    country, 
-                    state, 
-                    district, 
-                    city, 
-                    pincode,
-                });
-                const savedUserInfo = await newUserInfo.save()
-                    .then(user => {
-                        const newUser = User.findOneAndUpdate({ email }, { addedExtraInfo: true }, { new: true });
-                        console.log('UserInfo recorded succefully');
-                        res.status(httpStatusCodes.OK);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(httpStatusCodes.FORBIDDEN)
-                            .send(errorMessages.errorSavingUserInfo);
-                    });
-            }
-        } 
-    }
+    //     if(!userFound) {
+    //         res.status(httpStatusCodes.FORBIDDEN)
+    //             .send(errorMessages.userNotRegistered);
+    //     } else {
+    //         if(!userFound.verified) {
+    //             res.status(httpStatusCodes.FORBIDDEN)
+    //                 .send(errorMessages.userNotVerified);
+    //         } else if(userFound.addedExtraInfo) {
+    //             res.status(httpStatusCodes.FORBIDDEN)
+    //                 .send(errorMessages.extraInfoAlreadyGiven);
+    //         } else {
+    //             const newUserInfo = new UserInfo({
+    //                 name, 
+    //                 sex, 
+    //                 mobileno, 
+    //                 address, 
+    //                 country, 
+    //                 state, 
+    //                 district, 
+    //                 city, 
+    //                 pincode,
+    //             });
+    //             const savedUserInfo = await newUserInfo.save()
+    //                 .then(user => {
+    //                     const newUser = User.findOneAndUpdate({ email }, { addedExtraInfo: true }, { new: true });
+    //                     console.log('UserInfo recorded succefully');
+    //                     res.status(httpStatusCodes.OK);
+    //                 })
+    //                 .catch(err => {
+    //                     console.log(err);
+    //                     res.status(httpStatusCodes.FORBIDDEN)
+    //                         .send(errorMessages.errorSavingUserInfo);
+    //                 });
+    //         }
+    //     } 
+    // }
 };
 
 

@@ -1,7 +1,7 @@
 const httpStatusCodes = require('http-status-codes');
 const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
-
+const User = require('../models/user');
 
 module.exports = {
     getMyProps: async (req, res, next) => {
@@ -53,12 +53,12 @@ module.exports = {
     },
 
     addProp: async (req, res, next) => {
-        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+        const {userId,propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
 
         console.log('addProp...');
 
         // Check required Fields
-        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
+        if(!userId || !propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
@@ -91,21 +91,55 @@ module.exports = {
             lastModified,
         });
 
-        // Adding property
-        const addedProp = await newProp.save()
-            .then(savedProp => {
-                console.log('Property added'); 
-                res.status(httpStatusCodes.CREATED)
-                    .json({ prop: savedProp });
+
+        await User.findById(userId)
+            .then(foundUser => {
+                console.log(foundUser);
+                await newProp.save()
+                    .then(savedProp => {
+                        console.log('Property added'); 
+                        foundUser.properties.push(savedProp);
+                        await User.findByIdAndUpdate(userId,foundUser,{new:true})
+                            .then(updatedUser => {
+                                res.status(httpStatusCodes.CREATED)
+                                    .json({ prop: updatedUser });
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(err);
+                            });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(err);
+                    });
             })
             .catch(err => {
                 console.log(err);
                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(err);
             });
+
+        // Adding property
+        // const addedProp = await newProp.save()
+        //     .then(savedProp => {
+        //         console.log('Property added'); 
+        //         res.status(httpStatusCodes.CREATED)
+        //             .json({ prop: savedProp });
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         res.status(httpStatusCodes.FORBIDDEN)
+        //             .send(err);
+        //     });
+        
+        
     },
     removeProp: async (req, res, next) => {
         const {propId} = req.query;
+        const {userId} = req.body;
       //  const {propId} = req.params;
 
         console.log('removeProp : '+propId);
@@ -113,17 +147,37 @@ module.exports = {
         // May need to perform some verifications such as user, etc..
 
         // Deleting property from database...
-        await Prop.findByIdAndRemove(propId,
-            function(err, docs){
-                if(err) {
+        await User.findById(userId)
+            .then(foundUser => {
+                var index = foundUser.properties.indexOf(propId);
+                if (index > -1) {
+                    foundUser.properties.splice(index, 1);
+                }
+                await User.findByIdAndUpdate(userId,foundUser,{new:true})
+                .then(updatedUser => {
+                    await Prop.findByIdAndRemove(propId,
+                        function(err, docs){
+                            if(err) {
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(err);
+                            } else {
+                                console.log('Property deleted succesfully...');
+                                res.status(httpStatusCodes.OK)
+                                    .send('property deleted succesfully');
+                            }
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
                     res.status(httpStatusCodes.FORBIDDEN)
                         .send(err);
-                } else {
-                    console.log('Property deleted succesfully...');
-                    res.status(httpStatusCodes.OK)
-                        .send('property deleted succesfully');
-                }
-        });
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(err);
+            });
     },
     updateProp: async (req, res, next) => {
         //const {propId} = req;
