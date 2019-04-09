@@ -179,59 +179,49 @@ module.exports = {
             });
     },
     updateProp: async (req, res, next) => {
-        //const {propId} = req;
-       // const {propId,propertyLocation,propertyName} = req.body;
-        var {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+        var {propId, propertyName, propertyLocation, constructionStatus, bookingStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
 
-        const foundProp = await Prop.findById(seller)
+        const foundProp = await Prop.findById(propId)
             .then()
             .catch(err => {
-                console.log('etrrererere');
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.propNotFound);
             });
 
-        if(!propertyName)           propertyName = foundProp.propertyName;
-        if(!propertyLocation)       propertyLocation = foundProp.propertyLocation;
-        if(!constructionStatus)     constructionStatus = foundProp.constructionStatus;
-        if(!bookingStatus)          bookingStatus = foundProp.bookingStatus;
-        if(!seller)                 seller =  foundProp.seller;
-        if(!property_type)          property_type = foundProp.property_type;
-        if(!property_amount)        property_amount = foundProp.property_amount;
-        if(!contract_type)          contract_type = foundProp.contract_type;
-        if(!floor)                  floor = foundProp.floor;
-        if(!carpet_area)            carpet_area = foundProp.carpet_area;
-        if(!state)                  state = foundProp.state;
-        if(!city)                   city = foundProp.city;
-        if(!description)            description = foundProp.description;
+        if(foundProp == undefined)
+        {
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.propNotFound);
+        } else {
+            if(propertyName)            foundProp.propertyName = propertyName;
+            if(propertyLocation)        foundProp.propertyLocation = propertyLocation;
+            if(constructionStatus)      foundProp.constructionStatus = constructionStatus;
+            if(bookingStatus)           foundProp.bookingStatus = bookingStatus;
+            if(property_type)           foundProp.property_type = property_type;
+            if(property_amount)         foundProp.property_amount = property_amount;
+            if(contract_type)           foundProp.contract_type = contract_type;
+            if(floor)                   foundProp.floor = floor;
+            if(carpet_area)             foundProp.carpet_area = carpet_area;
+            if(state)                   foundProp.state = state;
+            if(city)                    foundProp.city = city;
+            if(description)             foundProp.description =description;
+    
+//            const lastModified = new Date();
+            foundProp.lastModified = new Date();
 
-        const lastModified = new Date();
-
-        const propUpdateAttr = {
-            propertyName : propertyName, 
-            propertyLocation : propertyLocation, 
-            constructionStatus : constructionStatus, 
-            bookingStatus : bookingStatus, 
-            seller : seller, 
-            property_type : property_type, 
-            property_amount : property_amount, 
-            contract_type : contract_type, 
-            floor : floor, 
-            carpet_area : carpet_area, 
-            state : state, 
-            city : city, 
-            description : description,
-            lastModified: lastModified
-        };
-
-        console.log(propUpdateAttr);
-        const updatedProp = await Prop.findByIdAndUpdate(propId,propUpdateAttr, {new : true})
-            .then(propUpd => {
-                console.log('Property updated succesfully..');
-                res.status(httpStatusCodes.OK)
-                    .json({ prop: propUpd});
-            })
-            .catch(err => {
-                console.log(err);
-            });
+            console.log(foundProp);
+            await Prop.findByIdAndUpdate(propId,foundProp, {new : true})
+                .then(propUpd => {
+                    console.log('Property updated succesfully..');
+                    res.status(httpStatusCodes.OK)
+                        .json({ prop: foundProp});
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.errorUpdatingProp);
+                });
+        }
     },
 
     searchProp: async (req, res, next) => {

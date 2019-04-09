@@ -60,12 +60,12 @@ const signToken = emailId => {
 module.exports = {
     register: async (req, res, next) => {
         console.log("register function");
-        const {email, password, password2, firstName, lastName, sex, mobileno, address, country, state, district, city, pincode} = req.body;
+        const {email, password, password2} = req.body;
     
         console.log(email + ' ' + password);
 
         //Check required fields
-        if(!email || !password || !password2 || !firstName || !lastName || !sex || !mobileno || !address || !country || !state || !district || !city || !pincode) {
+        if(!email || !password || !password2) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);
         } else {
@@ -109,6 +109,18 @@ module.exports = {
             const randomHash = randomstring.generate();
             const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
             const createdOn = new Date();
+
+            const firstName = 'None';
+            const lastName = 'None';
+            const sex = 'None';
+            const mobileno = 'None'; 
+            const address = 'None';
+            const country = 'None';
+            const state = 'None';
+            const district = 'None';
+            const city = 'None';
+            const pincode = 'None';
+
             const newUser = new User({
                 email,
                 password,
@@ -266,6 +278,45 @@ module.exports = {
                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(errorMessages.propNotFound);
             });
+    },
+    updateUser: async (req, res, next) => {
+        const {userId, firstName, lastName, sex, mobileno, address, country, state, district, city, pincode} = req.body;
+        console.log("updateUser : " + userId);
+
+        const foundUser = await User.findById(userId)
+            .then()
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.userNotExist);
+            });
+
+        if(!foundUser)
+        {
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.userNotExist);
+        } else {
+            if(firstName)           foundUser.firstName = firstName;
+            if(lastName)            foundUser.lastName = lastName;
+            if(sex)                 foundUser.sex = sex;
+            if(mobileno)            foundUser.mobileno = mobileno;
+            if(address)             foundUser.address = address;
+            if(country)             foundUser.country = country;
+            if(state)               foundUser.state = state;
+            if(district)            foundUser.district = district;
+            if(city)                foundUser.city = city;
+            if(pincode)             foundUser.pincode =pincode;
+
+            await User.findByIdAndUpdate(userId,foundUser)
+                .then(updatedUser => {
+                    res.status(httpStatusCodes.OK)
+                        .json({user: foundUser});
+                })
+                .catch(err => {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.errorUpdatingUser);
+                });
+        }
     },
 };
 

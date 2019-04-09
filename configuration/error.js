@@ -8,6 +8,8 @@ module.exports = {
     emailNotSent: 'Problem sending verification email',
     errorSavingUser: 'Problem saving new user to DataBase',
     errorSavingUserInfo: 'Problem saving user info to DataBase',
+    errorUpdatingUser: 'Problem updating User to DataBase',
+    errorUpdatingProp: 'Problem updating property to DataBase',
     userNotRegistered: 'This email address is not registered.',
     extraInfoAlreadyGiven: 'User already gave extra information',
     propNotFound: 'Property not found.',

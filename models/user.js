@@ -84,10 +84,6 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'wishList',
         required: true,
-    },
-    userInfo: {
-        type: Schema.Types.ObjectId,
-        ref: 'userInfo',
     }
     */
 });

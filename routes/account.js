@@ -35,6 +35,11 @@ router.route('/getAllProps')
         AccountController.getAllProps
 );
 
+router.route('/updateUser')
+    .post(
+        AccountController.updateUser
+);
+
 // Verify
 router.route('/verify/:email')
     .get(
