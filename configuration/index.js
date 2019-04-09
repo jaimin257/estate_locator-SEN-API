@@ -6,4 +6,11 @@ module.exports = {
     cookiesName: {
         jwt: 'jwt',
     },
+    
+    validityErrors: {
+        permissionDenied: 'Permission Denied',
+        accountAlreadyExists: 'Account Already Exists',
+        invalidToken: 'Invalid Token',
+        sessionExpired: 'Session Expired',
+    },
 };

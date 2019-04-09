@@ -1,11 +1,13 @@
 const httpStatusCodes = require('http-status-codes');
 const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
-
+const User = require('../models/user');
 
 module.exports = {
     getMyProps: async (req, res, next) => {
-        const { user } = req;
+        const { user } = req.body;
+
+        console.log('getMyProps : ::');
 
         const foundProps = await Prop.find({ seller: user })
             .then(function (props) {
@@ -18,9 +20,10 @@ module.exports = {
             });
     },
 
-    getProp: async (req, res, next) => {
-        const { user } = req;
-        const { propId } = req.params;
+    getThisProp: async (req, res, next) => {
+        const { propId } = req.query;
+
+        console.log('getThisProp : '+propId);
 
         const foundProp = await Prop.findById(propId);
 
@@ -36,6 +39,8 @@ module.exports = {
     getAllProps: async (req, res, next) => {
 //        const { user } = req;
 
+        console.log('getAllProps...');
+
         await Prop.find({})
             .then(function (props) {
                 res.status(httpStatusCodes.OK)
@@ -48,10 +53,12 @@ module.exports = {
     },
 
     addProp: async (req, res, next) => {
-        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, adderess, description} = req.body;
+        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+
+        console.log('addProp...');
 
         // Check required Fields
-        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !adderess || !description) {
+        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
@@ -76,18 +83,46 @@ module.exports = {
             contract_type, 
             floor, 
             carpet_area, 
-            adderess,
+            //address,
+            state,
+            city,
             description,
             createdOn,
             lastModified,
         });
 
-        // Adding property
-        const addedProp = await newProp.save()
-            .then(newProp => {
-                console.log('Property added');
-                res.status(httpStatusCodes.CREATED)
-                    .json({ prop: addedProp });
+
+        // Adding Property...
+        await User.findById(seller)
+            .then(foundUser => {
+                if(!foundUser)
+                {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+                } else {
+                    console.log(foundUser);
+                    newProp.save()
+                        .then(savedProp => {
+                            console.log('Property added'); 
+                            foundUser.properties.push(savedProp);
+                            User.findByIdAndUpdate(seller,foundUser,{new:true})
+                                .then(updatedUser => {
+                                    console.log(updatedUser);
+                                    res.status(httpStatusCodes.CREATED)
+                                        .json({ prop: savedProp });
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                    res.status(httpStatusCodes.FORBIDDEN)
+                                        .send(err);
+                                });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(httpStatusCodes.FORBIDDEN)
+                                .send(err);
+                        });
+                }  
             })
             .catch(err => {
                 console.log(err);
@@ -96,34 +131,145 @@ module.exports = {
             });
     },
     removeProp: async (req, res, next) => {
-        const {user} = req;
-        const {propId} = req.params;
+        const {propId} = req.query;
+        const {userId} = req.body;
+      //  const {propId} = req.params;
+
+        console.log('removeProp : '+propId);
 
         // May need to perform some verifications such as user, etc..
 
         // Deleting property from database...
-        await Prop.findByIdAndRemove(propId,
-            function(err, docs){
-                if(err) {
+        await User.findById(userId)
+            .then(foundUser => {
+                if(!foundUser)
+                {
                     res.status(httpStatusCodes.FORBIDDEN)
-                        .send(err);
+                        .send(errorMessages.userNotExist);
                 } else {
-                    console.log('Property deleted succesfully...');
-                    res.redirect('/property');
+                    var index = foundUser.properties.indexOf(propId);
+                    if (index > -1) {
+                        foundUser.properties.splice(index, 1);
+                    }
+                    User.findByIdAndUpdate(userId,foundUser,{new:true})
+                        .then(updatedUser => {
+                            Prop.findByIdAndRemove(propId,
+                                    function(err, docs){
+                                        if(err) {
+                                            res.status(httpStatusCodes.FORBIDDEN)
+                                                .send(err);
+                                        } else {
+                                            console.log('Property deleted succesfully...');
+                                            res.status(httpStatusCodes.OK)
+                                                .send('property deleted succesfully');
+                                        }
+                            });
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            res.status(httpStatusCodes.FORBIDDEN)
+                                .send(err);
+                        });
                 }
-        });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(err);
+            });
     },
     updateProp: async (req, res, next) => {
-        const {userId, propId} = req;
-        const propUpdateAttr = req.value.body;
+        //const {propId} = req;
+       // const {propId,propertyLocation,propertyName} = req.body;
+        var {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
 
-        propUpdateAttr.lastModified = new Date();
-        
-        const updatedProp = await Prop.findByIdAndUpdate(propId, propUpdateAttr, {new : true});
-        
-        console.log('Property updated succesfully..');
-        
-        res.status(httpStatusCodes.OK)
-            .json({ prop: updatedProp});
+        const foundProp = await Prop.findById(seller)
+            .then()
+            .catch(err => {
+                console.log('etrrererere');
+            });
+
+        if(!propertyName)           propertyName = foundProp.propertyName;
+        if(!propertyLocation)       propertyLocation = foundProp.propertyLocation;
+        if(!constructionStatus)     constructionStatus = foundProp.constructionStatus;
+        if(!bookingStatus)          bookingStatus = foundProp.bookingStatus;
+        if(!seller)                 seller =  foundProp.seller;
+        if(!property_type)          property_type = foundProp.property_type;
+        if(!property_amount)        property_amount = foundProp.property_amount;
+        if(!contract_type)          contract_type = foundProp.contract_type;
+        if(!floor)                  floor = foundProp.floor;
+        if(!carpet_area)            carpet_area = foundProp.carpet_area;
+        if(!state)                  state = foundProp.state;
+        if(!city)                   city = foundProp.city;
+        if(!description)            description = foundProp.description;
+
+        const lastModified = new Date();
+
+        const propUpdateAttr = {
+            propertyName : propertyName, 
+            propertyLocation : propertyLocation, 
+            constructionStatus : constructionStatus, 
+            bookingStatus : bookingStatus, 
+            seller : seller, 
+            property_type : property_type, 
+            property_amount : property_amount, 
+            contract_type : contract_type, 
+            floor : floor, 
+            carpet_area : carpet_area, 
+            state : state, 
+            city : city, 
+            description : description,
+            lastModified: lastModified
+        };
+
+        console.log(propUpdateAttr);
+        const updatedProp = await Prop.findByIdAndUpdate(propId,propUpdateAttr, {new : true})
+            .then(propUpd => {
+                console.log('Property updated succesfully..');
+                res.status(httpStatusCodes.OK)
+                    .json({ prop: propUpd});
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    },
+
+    searchProp: async (req, res, next) => {
+       // var { searchStr } = req.body;
+      //  console.log(searchStr);
+
+        const foundProps = await Prop.find({
+            "$text": {
+                "$search": req.body.query
+            }
+            },
+            {
+                document: 1,
+                created: 1,
+                _id: 1,
+                textScore: {
+                    $meta: "textScore"
+                }
+            },
+            {
+                sort: {
+                    textScore: {
+                        $meta: "textScore"
+                    }
+                }
+            }
+        );
+        // .toArray(function(err, items) {
+        //     res.send(items);
+        // });
+            
+        if(foundProps != undefined) {
+            res.status(httpStatusCodes.OK)
+                .send(foundProps);
+        } else {
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send('errororro');
+        }
+    
     }
 };

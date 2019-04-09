@@ -17,7 +17,7 @@ const propertySchema = Schema({
         type: String,
         required: true,
     },
-    bookingStatus: {
+    bookingStatus: { 
         type: String,
         required: true,
     },
@@ -47,16 +47,12 @@ const propertySchema = Schema({
         type: String,
         required: true,
     },
-    adderess: {
-        street: {
-            type: String,
-        },
-        locality: {
-            type: String,
-        },
-        city: {
-            type: String,
-        },
+    state: {
+        type: String,
+        required: true,
+    },
+    city: {
+        type: String,
         required: true,
     },
     description: {

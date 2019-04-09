@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
+const passportConf = require('../passport');
 
 const PropController = require('../controllers/property');
 
 // Get your properties
 router.route('/')
     .get(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         PropController.getMyProps
     );
 
@@ -16,28 +18,39 @@ router.route('/all')
         PropController.getAllProps
     );
 
-// Get specific Property
-router.route('/:propId')
-    .get(
-        PropController.getProp
-    );
-
 // Add new Property
 router.route('/addProp')
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         PropController.addProp
     );
 
 // Remove Property
-router.route('/removeProp/:propId')
-    .patch(
+router.route('/removeProp')
+    .delete(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         PropController.removeProp
     );
 
 // Update property
-router.route('/updateProp/:propId')
-    .patch(
+router.route('/updateProp')
+    .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         PropController.updateProp
     );
 
-    module.exports = router; 
+// Get specific Property
+router.route('/getThisProp')
+    .get(
+        PropController.getThisProp
+    );
+
+router.route('/searchProp')
+    .post(
+        PropController.searchProp
+    );
+
+module.exports = router; 
