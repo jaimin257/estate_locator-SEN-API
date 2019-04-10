@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const httpStatusCodes = require('http-status-codes');
 const JWT = require(`jsonwebtoken`);
 
+//const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
 
 const {
     JWT_SECRET,
@@ -22,6 +23,59 @@ const { smtpTransport } = require('../configuration/mail'),
     mailTemplates = require('../configuration/mailTemplates.json'),
     mailAccountUserName = require('../configuration/keys').MAIL_USER,
     mailAccountPassword = require('../configuration/keys').MAIL_PASS;
+
+const sendForgetPasswordMail = async (email,link) => {
+    const options = {   //**************  */
+        link: link
+    };
+
+    const tags = {
+        email: email,
+        link: link
+    };
+
+    let mailBody = mustache.render(mailTemplates.signUp.body, tags);
+    const mailOptions = {
+        from: mailAccountUserName,
+        to: email,
+        cc: mailTemplates.forgetPassword.cc,
+        bcc: mailTemplates.forgetPassword.bcc,
+        subject: mailTemplates.forgetPassword.subject,
+        html: mailBody
+    };
+
+    const info = await smtpTransport.sendMail(mailOptions)
+        .then(mailSent => {
+            console.log('forget password Link sent');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
+
+const sendPasswordChangedMail = async (email) => {
+    const options = {
+        email: email,
+    };
+
+    let mailBody = mustache.render(mailTemplates.signUp.body, options);
+    const mailOptions = {
+        from: mailAccountUserName,
+        to: email,
+        cc: mailTemplates.passwordChanged.cc,
+        bcc: mailTemplates.passwordChanged.bcc,
+        subject: mailTemplates.passwordChanged.subject,
+        html: mailBody
+    };
+
+    const info = await smtpTransport.sendMail(mailOptions)
+        .then(mailSent => {
+            console.log('password changed succesfully...');
+        })
+        .catch(err => {
+            console.log(err);
+        });
+};
 
 const sendVerificationMail = async (email, link) => {
     const options = {
@@ -148,7 +202,8 @@ module.exports = {
             }));
 
             var strtmp = email;
-            var str = strtmp.substring(1,strtmp.length-1);
+            var str = strtmp.substring(0,strtmp.length-1);
+            console.log("str : " + str);
             str = '"<' + str + '>"';
             const editedEmail = JSON.parse(str);
             console.log(editedEmail);
@@ -180,25 +235,172 @@ module.exports = {
         const { email } = req.params;
         const user = await User.findOne({ email });
 
+        console.log('verify : ' + email);
+
         if(!user) {
             res.send('<h2>This link has been used already and is now invalid.</h2>');
         } 
         else if(user.verified == true) {
             console.log('already verified...');
             res.status(httpStatusCodes.FORBIDDEN)
-                .send('<h2>You are already verified...! Maybe love is fake!!!</h2>');
+                .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
         }
         else if (req.query.id === user.randomHash) {
             console.log('use r email address verified succefully');
             const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
             res.status(httpStatusCodes.OK)
-                .send('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+                .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
         } else {
             console.log('Something went wrong');
             res.status(httpStatusCodes.FORBIDDEN)
-                .send('<h2>Something went wrong! Maybe love is fake!!!</h2>');
+                .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
         }
     },
+
+    resendVerificationLink: async (req, res, next) => {
+        const {userId} = req.query;
+
+        const user = await User.findById(userId);
+
+        var strtmp = user.email;
+        var str = strtmp.substring(0,strtmp.length-1);
+        console.log("str : " + str);
+        str = '"<' + str + '>"';
+        const editedEmail = JSON.parse(str);
+        console.log(editedEmail);
+
+        const link = 'locolhost://1443' + '/account/verify/' + user.email + '?id=' + user.randomHash;
+        const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
+
+        // save user
+            await sendVerificationMail(editedEmail,link)
+            .then(Response => {
+                res.status(HttpStatus.CREATED)
+                    .end('<h1>Verification link sent to email ' + email + ' please verify your account</h1><br><a href=' + resendVerificationLink + '>Click here to resend verification link</a>');
+            })
+            .catch(err => {
+                console.log('err*********************');
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.emailNotSent);
+            });
+    },
+
+    forgetPassword: async (req, res, next) => {
+        const {email} = req.params;
+
+        const foundUser = User.findOne({ email });
+
+        if (!foundUser) {
+            return res.sendStatus(HttpStatus.FORBIDDEN);
+        }
+        let randomHash;
+        const linkExpiryTime = new Date();
+        linkExpiryTime.setHours(linkExpiryTime.getHours() + RESET_PASSWORD_EXPIRY_TIME);
+
+        if (foundUser.resetPasswordRequestTime) {
+            const timeNotAllowed = new Date();
+            timeNotAllowed.setHours(timeNotAllowed.getHours() - userBlockageTimeForTooManySignUpRequests);
+
+            if (foundUser.resetPasswordRequestTime <= timeNotAllowed) {
+                foundUser.resetPasswordRequestTime = new Date();
+                randomHash = randomstring.generate();
+                foundUser.resetPasswordRequest = 1;
+            } else if (foundUser.resetPasswordRequest >= maximumSignUpRequestBeforeBlocking) {
+                return res.status(HttpStatus.FORBIDDEN)
+                    .send(errorMessages.blockUser);
+            } else {
+                randomHash = foundUser.resetPasswordToken;
+                foundUser.resetPasswordRequest++;
+            }
+        } else {
+            randomHash = randomstring.generate();
+            foundUser.resetPasswordRequestTime = new Date();
+            foundUser.resetPasswordRequest = 1;
+        }
+
+        var strtmp = user.email;
+        var str = strtmp.substring(0,strtmp.length-1);
+        console.log("str : " + str);
+        str = '"<' + str + '>"';
+        const editedEmail = JSON.parse(str);
+        console.log(editedEmail);
+
+        const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
+
+        foundUser.resetPasswordToken = randomHash;
+        foundUser.resetPasswordExpires = linkExpiryTime;
+        const updatedUser = await foundUser.save();
+
+        await sendForgetPasswordMail(editedEmail,link)
+            .then(Response => {
+                res.status(HttpStatus.OK)
+                    .end('Response: Password reset link sent');
+            })
+            .catch(err => {
+                console.log('err*********************');
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.emailNotSent);
+            });
+    },
+
+    verifyResetPasswordLink: async (req, res, next) => {
+        const { email } = req.params;
+        const user = await User.findOne({ email });
+
+        if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
+            //req.flash('error', 'Password reset token is invalid or has expired.');
+            res.status(httpStatusCodes.FORBIDDEN)
+                .end('<h2>Password reset token is invalid or has expired.</h2>');
+           // return res.redirect(homePage);
+        }
+        res.status(httpStatusCodes.OK)
+                .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+    },
+
+    resetPassword: async (req, res, next) => {
+        const { email } = req.params;
+        const user = await User.findOne({ email });
+
+        if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.passwordResetTokenInvalid);
+        }
+
+
+        bcrypt.genSalt(10, (err, salt) => 
+            bcrypt.hash(password, salt, (err, hash) => {
+                if(err) throw err;
+
+                // Set password to hashed value
+                user.password = hash;
+            }));
+
+       // user.password = await hashPassword(req.body.password);
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        user.resetPasswordRequest = undefined;
+        user.resetPasswordRequestTime = undefined;    
+
+        await user.save();
+
+        var strtmp = user.email;
+        var str = strtmp.substring(0,strtmp.length-1);
+        console.log("str : " + str);
+        str = '"<' + str + '>"';
+        const editedEmail = JSON.parse(str);
+        console.log(editedEmail);
+
+        await sendPasswordChangedMail(editedEmail)
+        .then(Response => {
+            res.status(HttpStatus.OK)
+                .end('Response: Password changed');
+        })
+        .catch(err => {
+            console.log('err*********************');
+            res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.emailNotSent);
+        });
+    },  
 
     logIn: async (req, res, next) => {
         const { email,password } = req.body;
@@ -353,7 +555,7 @@ module.exports = {
                     else{
                         console.log('Add property to wishlist');
                         foundUser.wishList.push(propId);
-                        User.findByIdAndUpdate(userId,foundUser,{ new: true})
+                        User.findByIdAndUpdate(userId,foundUser,{ new: true })
                             .then(updateUser => {
                                 res.status(httpStatusCodes.OK)
                                     .json({user: userFound});
@@ -371,6 +573,52 @@ module.exports = {
                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(errorMessages.someThingWentWrong);
             });
+    },
+    delPropFromWishlist: async(req, res, next) => {
+        const {userId, propId} = req.body;
+
+        console.log('Delete' + propId + 'from wish list of '+ userId);
+        
+        if(!userId || !propId ) {
+            res.status(httpStatusCodes.PRECONDITION_FAILED)
+                .send(errorMessages.requiredFieldsEmpty);            
+        } else {
+            // Extra verifications...
+        }
+        console.log('All details for delete from wishlist is ok.');
+
+        await User.findById(userId)
+            .then(foundUser => {
+                if(!foundUser){
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+                }
+                else{
+                    console.log(foundUser);
+                    var index = foundUser.wishList.indexOf(propId);
+                    if(index > -1){
+                        foundUser.wishList.splice(index, 1);
+                        User.findByIdAndUpdate(userId, foundUser, {new : true})
+                            .then(updatedUser => {
+                                res.status(httpStatusCodes.OK)
+                                    .json({user : foundUser});
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(err);
+                            })
+                    }
+                    else{
+                        // failure message
+                    }
+                }
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(err);
+            })
     }
 };
 

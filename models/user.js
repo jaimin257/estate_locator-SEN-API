@@ -79,13 +79,30 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'property'
     }],
-  /*
+
+    //ResetPassword fields
+    resetPasswordRequestTime: {
+        type: Date,
+    },
+
+    resetPasswordToken: {
+        type: String,
+    },
+
+    resetPasswordExpires: {
+        type: Date,
+    },
+
+    resetPasswordRequest: {
+        type: Number,
+        default: 0
+    },
+  
     wishList: {
         type: Schema.Types.ObjectId,
         ref: 'wishList',
         required: true,
     }
-    */
 });
 
 userSchema.methods.isValid = async function (newPassword) {

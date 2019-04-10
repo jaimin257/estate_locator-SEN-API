@@ -40,6 +40,28 @@ router.route('/updateUser')
         AccountController.updateUser
 );
 
+
+/****  New ****/
+router.route('/resendVerificationLink')     // Done...
+    .post(
+        AccountController.resendVerificationLink
+    );
+
+router.route('/forgetPassword')
+    .post(
+        AccountController.forgetPassword
+);
+
+router.route('/resetPassword')
+    .get(
+        AccountController.verifyResetPasswordLink
+    )
+    .post(
+        AccountController.resetPassword
+    );
+
+
+
 // Verify
 router.route('/verify/:email')
     .get(
@@ -49,6 +71,11 @@ router.route('/verify/:email')
 router.route('/addToWishList')
     .post(
         AccountController.addPropToWishlist
+);
+
+router.route('/delPropFromWishlist')
+    .post(
+        AccountController.delPropFromWishlist
 );
 
 module.exports = router; 

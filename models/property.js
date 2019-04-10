@@ -17,10 +17,6 @@ const propertySchema = Schema({
         type: String,
         required: true,
     },
-    bookingStatus: { 
-        type: String,
-        required: true,
-    },
     seller: {
         type: Schema.Types.ObjectId,
         ref: 'user', 

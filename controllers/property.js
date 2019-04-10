@@ -53,12 +53,12 @@ module.exports = {
     },
 
     addProp: async (req, res, next) => {
-        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+        const {propertyName, propertyLocation, constructionStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
         var {noOfRooms, furnishedType} = req.body;
         console.log('addProp...');
 
         // Check required Fields
-        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
+        if(!propertyName || !propertyLocation || !constructionStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
@@ -79,7 +79,6 @@ module.exports = {
             propertyName,
             propertyLocation,
             constructionStatus, 
-            bookingStatus, 
             seller, 
             property_type, 
             property_amount, 
@@ -159,26 +158,26 @@ module.exports = {
                     var index = foundUser.properties.indexOf(propId);
                     if (index > -1) {
                         foundUser.properties.splice(index, 1);
-                    }
-                    User.findByIdAndUpdate(userId,foundUser,{new:true})
-                        .then(updatedUser => {
-                            Prop.findByIdAndRemove(propId,
-                                    function(err, docs){
-                                        if(err) {
-                                            res.status(httpStatusCodes.FORBIDDEN)
-                                                .send(err);
-                                        } else {
-                                            console.log('Property deleted succesfully...');
-                                            res.status(httpStatusCodes.OK)
-                                                .send('property deleted succesfully');
-                                        }
+                        User.findByIdAndUpdate(userId,foundUser,{new:true})
+                            .then(updatedUser => {
+                                Prop.findByIdAndRemove(propId,
+                                        function(err, docs){
+                                            if(err) {
+                                                res.status(httpStatusCodes.FORBIDDEN)
+                                                    .send(err);
+                                            } else {
+                                                console.log('Property deleted succesfully...');
+                                                res.status(httpStatusCodes.OK)
+                                                    .send('property deleted succesfully');
+                                            }
+                                });
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(err);
                             });
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.status(httpStatusCodes.FORBIDDEN)
-                                .send(err);
-                        });
+                    }
                 }
             })
             .catch(err => {
@@ -188,7 +187,7 @@ module.exports = {
             });
     },
     updateProp: async (req, res, next) => {
-        var {propId, propertyName, propertyLocation, constructionStatus, bookingStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
+        var {propId, propertyName, propertyLocation, constructionStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
 
         const foundProp = await Prop.findById(propId)
             .then()
@@ -205,7 +204,6 @@ module.exports = {
             if(propertyName)            foundProp.propertyName = propertyName;
             if(propertyLocation)        foundProp.propertyLocation = propertyLocation;
             if(constructionStatus)      foundProp.constructionStatus = constructionStatus;
-            if(bookingStatus)           foundProp.bookingStatus = bookingStatus;
             if(property_type)           foundProp.property_type = property_type;
             if(property_amount)         foundProp.property_amount = property_amount;
             if(contract_type)           foundProp.contract_type = contract_type;
