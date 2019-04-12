@@ -7,11 +7,21 @@ const app = express();
 // DB Config
 const db = require('./configuration/keys').DB_URI;
 
-//connect to Mongo
+// //connect to Mongo
 mongoose.connect(db, { useNewUrlParser: true })
     .then(() => console.log('MongoDB connection establlished'))
     .catch(err => console.log(err));
 
+// mongoose.connect(require('./configuration/keys').DB_URI, function(err, database) {  
+//     //db = database;
+//     database.collection("property", { }, function(err, coll) {
+//             database.ensureIndex("property", {  
+//             description: "text"
+//             }, function(err, indexname) {
+//             assert.equal(null, err);
+//             });
+//     });
+// });
 
 
 // BodyParser
@@ -24,7 +34,6 @@ app.use(passport.session());
 const PORT = process.nextTick.PORT || 1433;
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
-
 
 //Routes
 app.use('/', require('./routes/index'));

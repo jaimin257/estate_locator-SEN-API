@@ -3,6 +3,27 @@ const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
 const User = require('../models/user');
 
+function occurrences(string, subString, allowOverlapping) {
+
+    string += "";
+    subString += "";
+    if (subString.length <= 0) return (string.length + 1);
+
+    var n = 0,
+        pos = 0,
+        step = allowOverlapping ? 1 : subString.length;
+
+    while (true) {
+        pos = string.indexOf(subString, pos);
+        if (pos >= 0) {
+            ++n;
+            pos += step;
+        } else break;
+    }
+    return n;
+}
+
+
 module.exports = {
     getMyProps: async (req, res, next) => {
         const { user } = req.body;
@@ -233,27 +254,34 @@ module.exports = {
         }
     },
     searchProp: async (req, res, next) => {
-        const { searchStr } = req.body;
+        console.log('search');
+        var searchStr = String(req.body.searchStr);
 
-        console.log('search : ' + searchStr);
+        searchStr = searchStr.replace("'","");
+        searchStr = searchStr.replace("'","");
 
-        const props = await Prop.find();
+        console.log(searchStr);
 
-        var i;
-        for(i=0;i<(props.length);i++)
-        {
-            var string = String(props[i].description);
-            var substr = String(searchStr);
-            if(string.indexOf(substr) > -1) {
-                props[i].searchScore = 10;
-                console.log('wow');
-            }
-            console.log('no');
-        }
+        await Prop.find()
+            .then(props => {
+                var result = [];
 
-        props.sort(function(a, b) {
-            return parseFloat(a.searchScore) - parseFloat(b.searchScore);
-        });
-
+                for(var i=0;i<props.length;i++)
+                {
+                    var string = ""+String(props[i].description)+"";
+                    var cnt = occurrences(string,searchStr);
+                    props[i].searchScore = cnt;
+                }
+        
+                props.sort((a, b) => (a.searchScore > b.searchScore) ? -1 : 1);
+        
+                res.status(httpStatusCodes.OK)
+                    .json({searchResult: props});
+            })
+            .catch(err => {
+                console.log(err);
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.errorUpdatingProp);
+            });
     }
 };

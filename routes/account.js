@@ -68,6 +68,8 @@ router.route('/verify/:email')
         AccountController.verify
 );
 
+
+// WishList...
 router.route('/addToWishList')
     .post(
         AccountController.addPropToWishlist
