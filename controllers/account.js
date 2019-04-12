@@ -173,15 +173,9 @@ module.exports = {
                         // Set password to hashed value
                         newUser.password = hash;
                 }));
-
-                var strtmp = email;
-                var str = strtmp.substring(1,strtmp.length-1);
-                str = '"<' + str + '>"';
-                const editedEmail = JSON.parse(str);
-                console.log(editedEmail);
-
+                
                 // save user
-                await sendVerificationMail(editedEmail,link)
+                await sendVerificationMail(email,link)
                 .then(Response => {
                     const savedUser = newUser.save()
                         .then(user => {
@@ -242,18 +236,12 @@ module.exports = {
 
         const user = await User.findById(userId);
 
-        var strtmp = user.email;
-        var str = strtmp.substring(1,strtmp.length-1);
-        str = '"<' + str + '>"';
-        const editedEmail = JSON.parse(str);
-        console.log(editedEmail);
-
         // Verification link generator
         const link = 'locolhost://1443' + '/account/verify/' + user.email + '?id=' + user.randomHash;
         const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
 
         // save user
-        await sendVerificationMail(editedEmail,link)
+        await sendVerificationMail(user.email,link)
             .then(Response => {
                 res.status(HttpStatus.CREATED)
                     .end('<h1>Verification link sent to email ' + email + ' please verify your account</h1><br><a href=' + resendVerificationLink + '>Click here to resend verification link</a>');
@@ -299,12 +287,6 @@ module.exports = {
                 foundUser.resetPasswordRequest = 1;
             }
 
-            var strtmp = user.email;
-            var str = strtmp.substring(1,strtmp.length-1);
-            str = '"<' + str + '>"';
-            const editedEmail = JSON.parse(str);
-            console.log(editedEmail);
-
             //forget password link generator
             const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
 
@@ -312,7 +294,7 @@ module.exports = {
             foundUser.resetPasswordExpires = linkExpiryTime;
             const updatedUser = await foundUser.save();
 
-            await sendForgetPasswordMail(editedEmail,link)
+            await sendForgetPasswordMail(user.email,link)
                 .then(Response => {
                     res.status(HttpStatus.OK)
                         .end('Response: Password reset link sent');
@@ -365,13 +347,7 @@ module.exports = {
 
         await user.save();
 
-        var strtmp = user.email;
-        var str = strtmp.substring(1,strtmp.length-1);
-        str = '"<' + str + '>"';
-        const editedEmail = JSON.parse(str);
-        console.log(editedEmail);
-
-        await sendPasswordChangedMail(editedEmail)
+        await sendPasswordChangedMail(user.email)
         .then(Response => {
             res.status(HttpStatus.OK)
                 .end('Response: Password changed');
