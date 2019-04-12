@@ -54,6 +54,7 @@ const propertySchema = Schema({
     description: {
         type: String,
         required: true,
+      //  text: true
     },
     noOfRooms: {
         type: String,
@@ -73,7 +74,12 @@ const propertySchema = Schema({
     lastModified: {
         type: Date,
         required: true,
+    },
+
+    searchScore: {
+        type: Number,
     }
+
 });
 
 const Property = mongoose.model('property',propertySchema);

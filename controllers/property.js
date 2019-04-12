@@ -232,43 +232,28 @@ module.exports = {
                 });
         }
     },
-
     searchProp: async (req, res, next) => {
-       // var { searchStr } = req.body;
-      //  console.log(searchStr);
+        const { searchStr } = req.body;
 
-        const foundProps = await Prop.find({
-            "$text": {
-                "$search": req.body.query
+        console.log('search : ' + searchStr);
+
+        const props = await Prop.find();
+
+        var i;
+        for(i=0;i<(props.length);i++)
+        {
+            var string = String(props[i].description);
+            var substr = String(searchStr);
+            if(string.indexOf(substr) > -1) {
+                props[i].searchScore = 10;
+                console.log('wow');
             }
-            },
-            {
-                document: 1,
-                created: 1,
-                _id: 1,
-                textScore: {
-                    $meta: "textScore"
-                }
-            },
-            {
-                sort: {
-                    textScore: {
-                        $meta: "textScore"
-                    }
-                }
-            }
-        );
-        // .toArray(function(err, items) {
-        //     res.send(items);
-        // });
-            
-        if(foundProps != undefined) {
-            res.status(httpStatusCodes.OK)
-                .send(foundProps);
-        } else {
-            res.status(httpStatusCodes.FORBIDDEN)
-                .send('errororro');
+            console.log('no');
         }
-    
+
+        props.sort(function(a, b) {
+            return parseFloat(a.searchScore) - parseFloat(b.searchScore);
+        });
+
     }
 };

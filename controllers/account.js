@@ -202,7 +202,7 @@ module.exports = {
             }));
 
             var strtmp = email;
-            var str = strtmp.substring(0,strtmp.length-1);
+            var str = strtmp.substring(1,strtmp.length-1);
             console.log("str : " + str);
             str = '"<' + str + '>"';
             const editedEmail = JSON.parse(str);
@@ -263,7 +263,7 @@ module.exports = {
         const user = await User.findById(userId);
 
         var strtmp = user.email;
-        var str = strtmp.substring(0,strtmp.length-1);
+        var str = strtmp.substring(1,strtmp.length-1);
         console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
@@ -319,7 +319,7 @@ module.exports = {
         }
 
         var strtmp = user.email;
-        var str = strtmp.substring(0,strtmp.length-1);
+        var str = strtmp.substring(1,strtmp.length-1);
         console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
@@ -384,7 +384,7 @@ module.exports = {
         await user.save();
 
         var strtmp = user.email;
-        var str = strtmp.substring(0,strtmp.length-1);
+        var str = strtmp.substring(1,strtmp.length-1);
         console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
