@@ -50,10 +50,10 @@ module.exports = {
         const foundProp = await Prop.findById(propId);
 
         if(!foundProp) {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.propNotFound);  
         } else {
-            res.status(httpStatusCodes.OK)
+            return res.status(httpStatusCodes.OK)
                 .json({ prop: foundProp });
         }
     },
@@ -81,7 +81,7 @@ module.exports = {
 
         // Check required Fields
         if(!propertyName || !propertyLocation || !constructionStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
-            res.status(httpStatusCodes.PRECONDITION_FAILED)
+            return res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         }
         
@@ -119,10 +119,10 @@ module.exports = {
             .then(foundUser => {
                 if(!foundUser)
                 {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
                 } else if(foundUser.verified == false || foundUser.addedExtraInfo == false) {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userIsNotMature);
                 } 
                 else {
@@ -169,7 +169,7 @@ module.exports = {
             .then(foundUser => {
                 if(!foundUser)
                 {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
                 } else {
                     var index = foundUser.properties.indexOf(propId);
@@ -180,11 +180,11 @@ module.exports = {
                                 Prop.findByIdAndRemove(propId,
                                         function(err, docs){
                                             if(err) {
-                                                res.status(httpStatusCodes.FORBIDDEN)
+                                                return res.status(httpStatusCodes.FORBIDDEN)
                                                     .send(err);
                                             } else {
                                                 console.log('Property deleted succesfully...');
-                                                res.status(httpStatusCodes.OK)
+                                                return res.status(httpStatusCodes.OK)
                                                     .send('property deleted succesfully');
                                             }
                                 });
@@ -217,7 +217,7 @@ module.exports = {
 
         if(foundProp == undefined)
         {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.propNotFound);
         } else {
             if(propertyName)            foundProp.propertyName = propertyName;
@@ -282,7 +282,7 @@ module.exports = {
 
                 props.sort((a, b) => (a.searchScore > b.searchScore) ? -1 : 1);
         
-                res.status(httpStatusCodes.OK)
+                return res.status(httpStatusCodes.OK)
                     .json({searchResult: props});
             })
             .catch(err => {

@@ -123,97 +123,84 @@ module.exports = {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);
         } else {
-            // Check if passwords match
-            if(password !== password2) {
-                res.status(httpStatusCodes.PRECONDITION_FAILED)
-                    .send(errorMessages.passwordNotMatching);
-            }
+            console.log('validation passed');
+            
+            // validation passed
+            const userFound = await User.findOne({ email: email });    
 
-            // Check pass length
-            if(password.length < 6) {
-                res.status(httpStatusCodes.PRECONDITION_FAILED)
-                    .send(errorMessages.passwordLengthNotEnough);
-            }            
-        }
-    
-        console.log('validation passed');
-        
-        // validation passed
-        const userFound = await User.findOne({ email: email });    
+            if(userFound) {
+                res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userAlreadyExist);
+            } else {
+                // Verification link generator
+                const randomHash = randomstring.generate();
+                const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
+                const createdOn = new Date();
 
-        if(userFound) {
-            res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.userAlreadyExist);
-        } else {
+                const firstName = 'None';
+                const lastName = 'None';
+                const sex = 'None';
+                const mobileno = 'None'; 
+                const address = 'None';
+                const country = 'None';
+                const state = 'None';
+                const district = 'None';
+                const city = 'None';
+                const pincode = 'None';
 
-            // Verification link generator
-            const randomHash = randomstring.generate();
-            const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
-            const createdOn = new Date();
+                const newUser = new User({
+                    email,
+                    password,
+                    createdOn,
+                    randomHash,
+                    firstName, 
+                    lastName, 
+                    sex, 
+                    mobileno, 
+                    address, 
+                    country, 
+                    state, 
+                    district, 
+                    city, 
+                    pincode
+                });
 
-            const firstName = 'None';
-            const lastName = 'None';
-            const sex = 'None';
-            const mobileno = 'None'; 
-            const address = 'None';
-            const country = 'None';
-            const state = 'None';
-            const district = 'None';
-            const city = 'None';
-            const pincode = 'None';
+                // Hash password
+                bcrypt.genSalt(10, (err, salt) => 
+                    bcrypt.hash(newUser.password, salt, (err, hash) => {
+                        if(err) throw err;
 
-            const newUser = new User({
-                email,
-                password,
-                createdOn,
-                randomHash,
-                firstName, 
-                lastName, 
-                sex, 
-                mobileno, 
-                address, 
-                country, 
-                state, 
-                district, 
-                city, 
-                pincode
-            });
+                        // Set password to hashed value
+                        newUser.password = hash;
+                }));
 
-            // Hash password
-            bcrypt.genSalt(10, (err, salt) => 
-                bcrypt.hash(newUser.password, salt, (err, hash) => {
-                    if(err) throw err;
+                var strtmp = email;
+                var str = strtmp.substring(1,strtmp.length-1);
+                str = '"<' + str + '>"';
+                const editedEmail = JSON.parse(str);
+                console.log(editedEmail);
 
-                    // Set password to hashed value
-                    newUser.password = hash;
-            }));
-
-            var strtmp = email;
-            var str = strtmp.substring(1,strtmp.length-1);
-            str = '"<' + str + '>"';
-            const editedEmail = JSON.parse(str);
-            console.log(editedEmail);
-
-            // save user
-            await sendVerificationMail(editedEmail,link)
-            .then(Response => {
-                const savedUser = newUser.save()
-                    .then(user => {
-                        console.log('User Registered');
-                        res.status(httpStatusCodes.OK)
-                            .json({ user: user});
+                // save user
+                await sendVerificationMail(editedEmail,link)
+                .then(Response => {
+                    const savedUser = newUser.save()
+                        .then(user => {
+                            console.log('User Registered');
+                            res.status(httpStatusCodes.OK)
+                                .json({ user: user});
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(errorMessages.errorSavingUser);
+                    });
                 })
                 .catch(err => {
                     console.log(err);
                     res.status(httpStatusCodes.FORBIDDEN)
-                        .send(errorMessages.errorSavingUser);
+                        .send(errorMessages.emailNotSent);
                 });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.emailNotSent);
-            });
+            }
         }
     },
 
@@ -226,21 +213,21 @@ module.exports = {
         await User.findOne({ email })
             .then(user => {
                 if(!user) {
-                    res.send('<h2>This link has been used already and is now invalid.</h2>');
+                    return res.send('<h2>This link has been used already and is now invalid.</h2>');
                 } 
                 else if(user.verified == true) {
                     console.log('already verified...');
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
                 }
                 else if (req.query.id === user.randomHash) {
                     console.log('user email address verified succefully');
                     const newUser = User.findOneAndUpdate({ email }, { verified: true }, { new: true });
-                    res.status(httpStatusCodes.OK)
+                    return res.status(httpStatusCodes.OK)
                         .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
                 } else {
                     console.log('Something went wrong');
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
                 }
             })
@@ -286,56 +273,56 @@ module.exports = {
 
         if (!foundUser) {
             return res.sendStatus(HttpStatus.FORBIDDEN);
-        }
-
-        let randomHash;
-        const linkExpiryTime = new Date();
-        linkExpiryTime.setHours(linkExpiryTime.getHours() + RESET_PASSWORD_EXPIRY_TIME);
-
-        if (foundUser.resetPasswordRequestTime) {
-            const timeNotAllowed = new Date();
-            timeNotAllowed.setHours(timeNotAllowed.getHours() - userBlockageTimeForTooManySignUpRequests);
-
-            if (foundUser.resetPasswordRequestTime <= timeNotAllowed) {
-                foundUser.resetPasswordRequestTime = new Date();
-                randomHash = randomstring.generate();
-                foundUser.resetPasswordRequest = 1;
-            } else if (foundUser.resetPasswordRequest >= maximumSignUpRequestBeforeBlocking) {
-                return res.status(HttpStatus.FORBIDDEN)
-                    .send(errorMessages.blockUser);
-            } else {
-                randomHash = foundUser.resetPasswordToken;
-                foundUser.resetPasswordRequest++;
-            }
         } else {
-            randomHash = randomstring.generate();
-            foundUser.resetPasswordRequestTime = new Date();
-            foundUser.resetPasswordRequest = 1;
+            let randomHash;
+            const linkExpiryTime = new Date();
+            linkExpiryTime.setHours(linkExpiryTime.getHours() + RESET_PASSWORD_EXPIRY_TIME);
+
+            if (foundUser.resetPasswordRequestTime) {
+                const timeNotAllowed = new Date();
+                timeNotAllowed.setHours(timeNotAllowed.getHours() - userBlockageTimeForTooManySignUpRequests);
+
+                if (foundUser.resetPasswordRequestTime <= timeNotAllowed) {
+                    foundUser.resetPasswordRequestTime = new Date();
+                    randomHash = randomstring.generate();
+                    foundUser.resetPasswordRequest = 1;
+                } else if (foundUser.resetPasswordRequest >= maximumSignUpRequestBeforeBlocking) {
+                    return res.status(HttpStatus.FORBIDDEN)
+                        .send(errorMessages.blockUser);
+                } else {
+                    randomHash = foundUser.resetPasswordToken;
+                    foundUser.resetPasswordRequest++;
+                }
+            } else {
+                randomHash = randomstring.generate();
+                foundUser.resetPasswordRequestTime = new Date();
+                foundUser.resetPasswordRequest = 1;
+            }
+
+            var strtmp = user.email;
+            var str = strtmp.substring(1,strtmp.length-1);
+            str = '"<' + str + '>"';
+            const editedEmail = JSON.parse(str);
+            console.log(editedEmail);
+
+            //forget password link generator
+            const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
+
+            foundUser.resetPasswordToken = randomHash;
+            foundUser.resetPasswordExpires = linkExpiryTime;
+            const updatedUser = await foundUser.save();
+
+            await sendForgetPasswordMail(editedEmail,link)
+                .then(Response => {
+                    res.status(HttpStatus.OK)
+                        .end('Response: Password reset link sent');
+                })
+                .catch(err => {
+                    console.log('err*********************');
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.emailNotSent);
+                });
         }
-
-        var strtmp = user.email;
-        var str = strtmp.substring(1,strtmp.length-1);
-        str = '"<' + str + '>"';
-        const editedEmail = JSON.parse(str);
-        console.log(editedEmail);
-
-        //forget password link generator
-        const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
-
-        foundUser.resetPasswordToken = randomHash;
-        foundUser.resetPasswordExpires = linkExpiryTime;
-        const updatedUser = await foundUser.save();
-
-        await sendForgetPasswordMail(editedEmail,link)
-            .then(Response => {
-                res.status(HttpStatus.OK)
-                    .end('Response: Password reset link sent');
-            })
-            .catch(err => {
-                console.log('err*********************');
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.emailNotSent);
-            });
     },
 
     verifyResetPasswordLink: async (req, res, next) => {
@@ -343,11 +330,12 @@ module.exports = {
         const user = await User.findOne({ email });
 
         if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .end('<h2>Password reset token is invalid or has expired.</h2>');
-        }
-        res.status(httpStatusCodes.OK)
+        } else {
+            return res.status(httpStatusCodes.OK)
                 .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+        }
     },
 
     resetPassword: async (req, res, next) => {
@@ -356,7 +344,7 @@ module.exports = {
         const user = await User.findOne({ email });
 
         if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.passwordResetTokenInvalid);
         }
 
@@ -405,7 +393,7 @@ module.exports = {
         const userFound = await User.findOne({ email });
 
         if(!userFound) {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.userNotRegistered);
         } else {
             res.status(httpStatusCodes.OK)
@@ -484,7 +472,7 @@ module.exports = {
 
         if(!foundUser)
         {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.userNotExist);
         } else {
             if(firstName)           foundUser.firstName = firstName;
@@ -523,7 +511,7 @@ module.exports = {
         const {userId,propId} = req.body;
         console.log('Add this property to ' + userId + 'account');
         if(!userId || !propId ) {
-            res.status(httpStatusCodes.PRECONDITION_FAILED)
+            return res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
             // Extra verifications...
@@ -574,7 +562,7 @@ module.exports = {
         console.log('Delete' + propId + 'from wish list of '+ userId);
         
         if(!userId || !propId ) {
-            res.status(httpStatusCodes.PRECONDITION_FAILED)
+            return res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
         } else {
             // Extra verifications...
@@ -584,7 +572,7 @@ module.exports = {
         await User.findById(userId)
             .then(foundUser => {
                 if(!foundUser){
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
                 }
                 else{
