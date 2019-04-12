@@ -6,5 +6,21 @@
         "cc": [],
         "bcc": [],
         "body": "Welcome to Estate Locator - DAIICT! <br><br> Please click on the below mentioned link to verify your email.<br><a href={{link}}>Click here to verify</a>"
+    },
+    "forgetPassword": {
+        "templateId": "6bhjnkolcdswxlz85co4h7c2b0p",
+        "templateName": "Forget Password",
+        "subject": "Password Reset Link",
+        "cc": [],
+        "bcc": [],
+        "body": "Hello {{email}}, <br>Please click on the link below to reset your password. <br><a href={{link}}>Click here to reset password</a>"
+      },
+      "passwordChanged": {
+        "templateId": "c8ks30lck7cjkrknz25c4l0dh",
+        "templateName": "Password successfully changed",
+        "subject": "Password successfully changed",
+        "cc": [],
+        "bcc": [],
+        "body": "Hello,<br><p>This is a confirmation mail for successful change in password for your account - {{email}}<p>"
     }
 }

@@ -16,5 +16,8 @@ module.exports = {
     propNotFound: 'Property not found.',
     problemFatchingProps: 'Problem Fatching Properties.',
     propAlreadyExist: 'Property already in wishlist',
-    someThingWentWrong: 'Some thing went wrong'
+    someThingWentWrong: 'Some thing went wrong',
+    invalidToken: 'Invalid Token',
+    sessionExpired: 'Session Expired',
+    signUpRequestExpired: 'Your verification link has expired. Sign up again',
 };

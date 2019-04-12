@@ -17,10 +17,6 @@ const propertySchema = Schema({
         type: String,
         required: true,
     },
-    bookingStatus: { 
-        type: String,
-        required: true,
-    },
     seller: {
         type: Schema.Types.ObjectId,
         ref: 'user', 
@@ -68,7 +64,6 @@ const propertySchema = Schema({
         required: true,
     },
 
-
     /* Server added field */
     createdOn: {
         type: Date,
@@ -77,6 +72,9 @@ const propertySchema = Schema({
     lastModified: {
         type: Date,
         required: true,
+    },
+    searchScore: {
+        type: Number,
     }
 });
 

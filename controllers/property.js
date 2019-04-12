@@ -3,11 +3,33 @@ const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
 const User = require('../models/user');
 
+function occurrences(string, subString, allowOverlapping) {
+    string += "";
+    subString += "";
+
+    //If string is empty...
+    if (subString.length <= 0) return (string.length + 1);
+
+    var n = 0,
+        pos = 0,
+        step = allowOverlapping ? 1 : subString.length;
+
+    while (true) {
+        pos = string.indexOf(subString, pos);
+        if (pos >= 0) {
+            ++n;
+            pos += step;
+        } else break;
+    }
+    return n;
+}
+
+
 module.exports = {
     getMyProps: async (req, res, next) => {
         const { user } = req.body;
 
-        console.log('getMyProps : ::');
+        console.log('getMyProps');
 
         const foundProps = await Prop.find({ seller: user })
             .then(function (props) {
@@ -28,17 +50,15 @@ module.exports = {
         const foundProp = await Prop.findById(propId);
 
         if(!foundProp) {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.propNotFound);  
         } else {
-            res.status(httpStatusCodes.OK)
+            return res.status(httpStatusCodes.OK)
                 .json({ prop: foundProp });
         }
     },
 
     getAllProps: async (req, res, next) => {
-//        const { user } = req;
-
         console.log('getAllProps...');
 
         await Prop.find({})
@@ -52,19 +72,17 @@ module.exports = {
             });
     },
 
+    //add property...
     addProp: async (req, res, next) => {
-        const {propertyName, propertyLocation, constructionStatus, bookingStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
+        const {propertyName, propertyLocation, constructionStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
         var {noOfRooms, furnishedType} = req.body;
+
         console.log('addProp...');
 
         // Check required Fields
-        if(!propertyName || !propertyLocation || !constructionStatus || !bookingStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
-            res.status(httpStatusCodes.PRECONDITION_FAILED)
+        if(!propertyName || !propertyLocation || !constructionStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
+            return res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
-        } else {
-            // Extra verifications...
-            // Nothing for now...
-            // May be used to check weather seller is verified.. or upgraded account or not.. or seller profile detail is filled properly or not... 
         }
         
         console.log('property details are ok.');
@@ -79,7 +97,6 @@ module.exports = {
             propertyName,
             propertyLocation,
             constructionStatus, 
-            bookingStatus, 
             seller, 
             property_type, 
             property_amount, 
@@ -102,10 +119,10 @@ module.exports = {
             .then(foundUser => {
                 if(!foundUser)
                 {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
                 } else if(foundUser.verified == false || foundUser.addedExtraInfo == false) {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userIsNotMature);
                 } 
                 else {
@@ -139,46 +156,45 @@ module.exports = {
                     .send(err);
             });
     },
+
+    //remove property...
     removeProp: async (req, res, next) => {
         const {propId} = req.query;
         const {userId} = req.body;
-      //  const {propId} = req.params;
 
         console.log('removeProp : '+propId);
-
-        // May need to perform some verifications such as user, etc..
 
         // Deleting property from database...
         await User.findById(userId)
             .then(foundUser => {
                 if(!foundUser)
                 {
-                    res.status(httpStatusCodes.FORBIDDEN)
+                    return res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.userNotExist);
                 } else {
                     var index = foundUser.properties.indexOf(propId);
                     if (index > -1) {
                         foundUser.properties.splice(index, 1);
-                    }
-                    User.findByIdAndUpdate(userId,foundUser,{new:true})
-                        .then(updatedUser => {
-                            Prop.findByIdAndRemove(propId,
-                                    function(err, docs){
-                                        if(err) {
-                                            res.status(httpStatusCodes.FORBIDDEN)
-                                                .send(err);
-                                        } else {
-                                            console.log('Property deleted succesfully...');
-                                            res.status(httpStatusCodes.OK)
-                                                .send('property deleted succesfully');
-                                        }
+                        User.findByIdAndUpdate(userId,foundUser,{new:true})
+                            .then(updatedUser => {
+                                Prop.findByIdAndRemove(propId,
+                                        function(err, docs){
+                                            if(err) {
+                                                return res.status(httpStatusCodes.FORBIDDEN)
+                                                    .send(err);
+                                            } else {
+                                                console.log('Property deleted succesfully...');
+                                                return res.status(httpStatusCodes.OK)
+                                                    .send('property deleted succesfully');
+                                            }
+                                });
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(httpStatusCodes.FORBIDDEN)
+                                    .send(err);
                             });
-                        })
-                        .catch(err => {
-                            console.log(err);
-                            res.status(httpStatusCodes.FORBIDDEN)
-                                .send(err);
-                        });
+                    }
                 }
             })
             .catch(err => {
@@ -187,8 +203,10 @@ module.exports = {
                     .send(err);
             });
     },
+
+    //Update property...
     updateProp: async (req, res, next) => {
-        var {propId, propertyName, propertyLocation, constructionStatus, bookingStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
+        var {propId, propertyName, propertyLocation, constructionStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
 
         const foundProp = await Prop.findById(propId)
             .then()
@@ -199,13 +217,12 @@ module.exports = {
 
         if(foundProp == undefined)
         {
-            res.status(httpStatusCodes.FORBIDDEN)
+            return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.propNotFound);
         } else {
             if(propertyName)            foundProp.propertyName = propertyName;
             if(propertyLocation)        foundProp.propertyLocation = propertyLocation;
             if(constructionStatus)      foundProp.constructionStatus = constructionStatus;
-            if(bookingStatus)           foundProp.bookingStatus = bookingStatus;
             if(property_type)           foundProp.property_type = property_type;
             if(property_amount)         foundProp.property_amount = property_amount;
             if(contract_type)           foundProp.contract_type = contract_type;
@@ -217,7 +234,6 @@ module.exports = {
             if(noOfRooms)               foundProp.noOfRooms =noOfRooms;
             if(furnishedType)           foundProp.furnishedType =furnishedType;
     
-//            const lastModified = new Date();
             foundProp.lastModified = new Date();
 
             console.log(foundProp);
@@ -235,42 +251,44 @@ module.exports = {
         }
     },
 
+    //search property...
     searchProp: async (req, res, next) => {
-       // var { searchStr } = req.body;
-      //  console.log(searchStr);
+        var searchStr = String(req.body.searchStr);
 
-        const foundProps = await Prop.find({
-            "$text": {
-                "$search": req.body.query
-            }
-            },
-            {
-                document: 1,
-                created: 1,
-                _id: 1,
-                textScore: {
-                    $meta: "textScore"
-                }
-            },
-            {
-                sort: {
-                    textScore: {
-                        $meta: "textScore"
-                    }
-                }
-            }
-        );
-        // .toArray(function(err, items) {
-        //     res.send(items);
-        // });
-            
-        if(foundProps != undefined) {
-            res.status(httpStatusCodes.OK)
-                .send(foundProps);
-        } else {
-            res.status(httpStatusCodes.FORBIDDEN)
-                .send('errororro');
+        console.log('search');
+
+        while(searchStr.indexOf("'")> -1)
+        {
+            searchStr = searchStr.replace("'","");
         }
-    
+
+        var wordsArray = searchStr.split(/\s+/);
+        console.log(searchStr);
+
+        await Prop.find()
+            .then(props => {
+                for(var i=0;i<props.length;i++)
+                {
+                    var string = ""+String(props[i].description)+"";
+                    var sum = 0;
+                    for(var j=0;j<wordsArray.length;j++)
+                    {
+                        console.log(wordsArray[j]);
+                        var cnt = occurrences(string,wordsArray[j]);
+                        sum += cnt;
+                    }
+                    props[i].searchScore = sum;
+                }
+
+                props.sort((a, b) => (a.searchScore > b.searchScore) ? -1 : 1);
+        
+                return res.status(httpStatusCodes.OK)
+                    .json({searchResult: props});
+            })
+            .catch(err => {
+                console.log(err);
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.errorUpdatingProp);
+            });
     }
 };
