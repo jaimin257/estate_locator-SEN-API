@@ -8,8 +8,6 @@ const bcrypt = require('bcryptjs');
 const httpStatusCodes = require('http-status-codes');
 const JWT = require(`jsonwebtoken`);
 
-//const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
-
 const {
     JWT_SECRET,
     JWT_EXPIRY_TIME,
@@ -24,6 +22,7 @@ const { smtpTransport } = require('../configuration/mail'),
     mailAccountUserName = require('../configuration/keys').MAIL_USER,
     mailAccountPassword = require('../configuration/keys').MAIL_PASS;
 
+// Mail for forget password...
 const sendForgetPasswordMail = async (email,link) => {
     const options = {   //**************  */
         link: link
@@ -53,6 +52,7 @@ const sendForgetPasswordMail = async (email,link) => {
         });
 };
 
+//password changed mail
 const sendPasswordChangedMail = async (email) => {
     const options = {
         email: email,
@@ -77,6 +77,7 @@ const sendPasswordChangedMail = async (email) => {
         });
 };
 
+// verification mail on registration...
 const sendVerificationMail = async (email, link) => {
     const options = {
         link: link
@@ -112,11 +113,10 @@ const signToken = emailId => {
 };
 
 module.exports = {
+    //Register user
     register: async (req, res, next) => {
-        console.log("register function");
         const {email, password, password2} = req.body;
-    
-        console.log(email + ' ' + password);
+        console.log("register function : " + email);
 
         //Check required fields
         if(!email || !password || !password2) {
@@ -133,10 +133,7 @@ module.exports = {
             if(password.length < 6) {
                 res.status(httpStatusCodes.PRECONDITION_FAILED)
                     .send(errorMessages.passwordLengthNotEnough);
-            }
-
-            // Verify contact no... is it number? is it valid number?
-            
+            }            
         }
     
         console.log('validation passed');
@@ -145,21 +142,11 @@ module.exports = {
         const userFound = await User.findOne({ email: email });    
 
         if(userFound) {
-            if(userFound.verified) {
-                if(userFound.addedExtraInfo) {
-                    res.status(httpStatusCodes.FORBIDDEN)
-                        .send(errorMessages.userAlreadyExist);
-                } else {
-                    //res.redirect('/register/step2');
-                    /******** Redirect to   '/register/step2'  *********  */
-                }
-            } else {
-                res.status(httpStatusCodes.FORBIDDEN)
-                        .send(errorMessages.userNotVerified);
-            }
+            res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.userAlreadyExist);
         } else {
-        //    res.send('Welcome to estate locator');
 
+            // Verification link generator
             const randomHash = randomstring.generate();
             const link = 'http://localhost:1433' + '/account/verify/' + email + '?id=' + randomHash;
             const createdOn = new Date();
@@ -203,7 +190,6 @@ module.exports = {
 
             var strtmp = email;
             var str = strtmp.substring(1,strtmp.length-1);
-            console.log("str : " + str);
             str = '"<' + str + '>"';
             const editedEmail = JSON.parse(str);
             console.log(editedEmail);
@@ -211,7 +197,7 @@ module.exports = {
             // save user
             await sendVerificationMail(editedEmail,link)
             .then(Response => {
-                    const savedUser = newUser.save()
+                const savedUser = newUser.save()
                     .then(user => {
                         console.log('User Registered');
                         res.status(httpStatusCodes.OK)
@@ -224,37 +210,44 @@ module.exports = {
                 });
             })
             .catch(err => {
-                console.log('err*********************');
+                console.log(err);
                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(errorMessages.emailNotSent);
             });
         }
     },
 
+    //verify User...
     verify: async (req, res, next) => {
         const { email } = req.params;
-        const user = await User.findOne({ email });
 
         console.log('verify : ' + email);
 
-        if(!user) {
-            res.send('<h2>This link has been used already and is now invalid.</h2>');
-        } 
-        else if(user.verified == true) {
-            console.log('already verified...');
-            res.status(httpStatusCodes.FORBIDDEN)
-                .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
-        }
-        else if (req.query.id === user.randomHash) {
-            console.log('use r email address verified succefully');
-            const newUser = await User.findOneAndUpdate({ email }, { verified: true }, { new: true });
-            res.status(httpStatusCodes.OK)
-                .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
-        } else {
-            console.log('Something went wrong');
-            res.status(httpStatusCodes.FORBIDDEN)
-                .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
-        }
+        await User.findOne({ email })
+            .then(user => {
+                if(!user) {
+                    res.send('<h2>This link has been used already and is now invalid.</h2>');
+                } 
+                else if(user.verified == true) {
+                    console.log('already verified...');
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
+                }
+                else if (req.query.id === user.randomHash) {
+                    console.log('user email address verified succefully');
+                    const newUser = User.findOneAndUpdate({ email }, { verified: true }, { new: true });
+                    res.status(httpStatusCodes.OK)
+                        .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+                } else {
+                    console.log('Something went wrong');
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
+                }
+            })
+            .catch(err => {
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(err);
+            });
     },
 
     resendVerificationLink: async (req, res, next) => {
@@ -264,16 +257,16 @@ module.exports = {
 
         var strtmp = user.email;
         var str = strtmp.substring(1,strtmp.length-1);
-        console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
         console.log(editedEmail);
 
+        // Verification link generator
         const link = 'locolhost://1443' + '/account/verify/' + user.email + '?id=' + user.randomHash;
         const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
 
         // save user
-            await sendVerificationMail(editedEmail,link)
+        await sendVerificationMail(editedEmail,link)
             .then(Response => {
                 res.status(HttpStatus.CREATED)
                     .end('<h1>Verification link sent to email ' + email + ' please verify your account</h1><br><a href=' + resendVerificationLink + '>Click here to resend verification link</a>');
@@ -285,6 +278,7 @@ module.exports = {
             });
     },
 
+    // Forget password
     forgetPassword: async (req, res, next) => {
         const {email} = req.params;
 
@@ -293,6 +287,7 @@ module.exports = {
         if (!foundUser) {
             return res.sendStatus(HttpStatus.FORBIDDEN);
         }
+
         let randomHash;
         const linkExpiryTime = new Date();
         linkExpiryTime.setHours(linkExpiryTime.getHours() + RESET_PASSWORD_EXPIRY_TIME);
@@ -320,11 +315,11 @@ module.exports = {
 
         var strtmp = user.email;
         var str = strtmp.substring(1,strtmp.length-1);
-        console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
         console.log(editedEmail);
 
+        //forget password link generator
         const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
 
         foundUser.resetPasswordToken = randomHash;
@@ -348,10 +343,8 @@ module.exports = {
         const user = await User.findOne({ email });
 
         if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
-            //req.flash('error', 'Password reset token is invalid or has expired.');
             res.status(httpStatusCodes.FORBIDDEN)
                 .end('<h2>Password reset token is invalid or has expired.</h2>');
-           // return res.redirect(homePage);
         }
         res.status(httpStatusCodes.OK)
                 .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
@@ -359,6 +352,7 @@ module.exports = {
 
     resetPassword: async (req, res, next) => {
         const { email } = req.params;
+        const { password } = req.body.password;
         const user = await User.findOne({ email });
 
         if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
@@ -385,7 +379,6 @@ module.exports = {
 
         var strtmp = user.email;
         var str = strtmp.substring(1,strtmp.length-1);
-        console.log("str : " + str);
         str = '"<' + str + '>"';
         const editedEmail = JSON.parse(str);
         console.log(editedEmail);
@@ -396,7 +389,7 @@ module.exports = {
                 .end('Response: Password changed');
         })
         .catch(err => {
-            console.log('err*********************');
+            console.log(err);
             res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.emailNotSent);
         });
@@ -411,20 +404,10 @@ module.exports = {
 
         const userFound = await User.findOne({ email });
 
-        console.log(email+' '+password);
-
         if(!userFound) {
             res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.userNotRegistered);
         } else {
-            /*  if(!userFound.verified) {
-                errors.push({ msg: 'Email not verified yet' });
-            } else if(!userFound.addedExtraInfo) {
-                res.redirect('/register/step2');
-            }
-            else {
-            */
-            
             res.status(httpStatusCodes.OK)
             .json({
                 cname1: 'cookiesNamekwt',
@@ -486,6 +469,7 @@ module.exports = {
                     .send(errorMessages.propNotFound);
             });
     },
+
     updateUser: async (req, res, next) => {
         const {userId, firstName, lastName, sex, mobileno, address, country, state, district, city, pincode} = req.body;
         console.log("updateUser : " + userId);
@@ -514,6 +498,15 @@ module.exports = {
             if(city)                foundUser.city = city;
             if(pincode)             foundUser.pincode =pincode;
 
+
+            if(firstName == 'None' || lastName == 'None' || sex == 'None' || mobileno == 'None' || address == 'None' || country == 'None' || state == 'None' || district == 'None' || city == 'None' || pincode == 'None')
+            {
+                res.status(httpStatusCodes.PRECONDITION_FAILED)
+                    .send(errorMessages.requiredFieldsEmpty);
+            }
+
+            foundUser.addedExtraInfo = true;
+
             await User.findByIdAndUpdate(userId,foundUser)
                 .then(updatedUser => {
                     res.status(httpStatusCodes.OK)
@@ -525,6 +518,7 @@ module.exports = {
                 });
         }
     },
+
     addPropToWishlist: async (req,res, next) => {
         const {userId,propId} = req.body;
         console.log('Add this property to ' + userId + 'account');
@@ -621,5 +615,3 @@ module.exports = {
             })
     }
 };
-
-

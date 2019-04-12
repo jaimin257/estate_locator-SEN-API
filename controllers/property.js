@@ -4,9 +4,10 @@ const Prop = require('../models/property');
 const User = require('../models/user');
 
 function occurrences(string, subString, allowOverlapping) {
-
     string += "";
     subString += "";
+
+    //If string is empty...
     if (subString.length <= 0) return (string.length + 1);
 
     var n = 0,
@@ -28,7 +29,7 @@ module.exports = {
     getMyProps: async (req, res, next) => {
         const { user } = req.body;
 
-        console.log('getMyProps : ::');
+        console.log('getMyProps');
 
         const foundProps = await Prop.find({ seller: user })
             .then(function (props) {
@@ -58,8 +59,6 @@ module.exports = {
     },
 
     getAllProps: async (req, res, next) => {
-//        const { user } = req;
-
         console.log('getAllProps...');
 
         await Prop.find({})
@@ -73,19 +72,17 @@ module.exports = {
             });
     },
 
+    //add property...
     addProp: async (req, res, next) => {
         const {propertyName, propertyLocation, constructionStatus, seller, property_type, property_amount, contract_type, floor, carpet_area, state, city, description} = req.body;
         var {noOfRooms, furnishedType} = req.body;
+
         console.log('addProp...');
 
         // Check required Fields
         if(!propertyName || !propertyLocation || !constructionStatus || !seller || !property_type || !property_amount || !contract_type || !floor || !carpet_area || !state || !city || !description) {
             res.status(httpStatusCodes.PRECONDITION_FAILED)
                 .send(errorMessages.requiredFieldsEmpty);            
-        } else {
-            // Extra verifications...
-            // Nothing for now...
-            // May be used to check weather seller is verified.. or upgraded account or not.. or seller profile detail is filled properly or not... 
         }
         
         console.log('property details are ok.');
@@ -159,14 +156,13 @@ module.exports = {
                     .send(err);
             });
     },
+
+    //remove property...
     removeProp: async (req, res, next) => {
         const {propId} = req.query;
         const {userId} = req.body;
-      //  const {propId} = req.params;
 
         console.log('removeProp : '+propId);
-
-        // May need to perform some verifications such as user, etc..
 
         // Deleting property from database...
         await User.findById(userId)
@@ -207,6 +203,8 @@ module.exports = {
                     .send(err);
             });
     },
+
+    //Update property...
     updateProp: async (req, res, next) => {
         var {propId, propertyName, propertyLocation, constructionStatus, property_type, property_amount, contract_type, floor, carpet_area, state, city, description, noOfRooms, furnishedType} = req.body;
 
@@ -236,7 +234,6 @@ module.exports = {
             if(noOfRooms)               foundProp.noOfRooms =noOfRooms;
             if(furnishedType)           foundProp.furnishedType =furnishedType;
     
-//            const lastModified = new Date();
             foundProp.lastModified = new Date();
 
             console.log(foundProp);
@@ -253,26 +250,36 @@ module.exports = {
                 });
         }
     },
+
+    //search property...
     searchProp: async (req, res, next) => {
-        console.log('search');
         var searchStr = String(req.body.searchStr);
 
-        searchStr = searchStr.replace("'","");
-        searchStr = searchStr.replace("'","");
+        console.log('search');
 
+        while(searchStr.indexOf("'")> -1)
+        {
+            searchStr = searchStr.replace("'","");
+        }
+
+        var wordsArray = searchStr.split(/\s+/);
         console.log(searchStr);
 
         await Prop.find()
             .then(props => {
-                var result = [];
-
                 for(var i=0;i<props.length;i++)
                 {
                     var string = ""+String(props[i].description)+"";
-                    var cnt = occurrences(string,searchStr);
-                    props[i].searchScore = cnt;
+                    var sum = 0;
+                    for(var j=0;j<wordsArray.length;j++)
+                    {
+                        console.log(wordsArray[j]);
+                        var cnt = occurrences(string,wordsArray[j]);
+                        sum += cnt;
+                    }
+                    props[i].searchScore = sum;
                 }
-        
+
                 props.sort((a, b) => (a.searchScore > b.searchScore) ? -1 : 1);
         
                 res.status(httpStatusCodes.OK)

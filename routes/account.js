@@ -11,38 +11,39 @@ router.route('/register')
         AccountController.register
     );
 
-// Login Handle
+// Login-logout Handles
 router.route('/logIn')
     .post(
         passport.authenticate('local', { session: false }),
         AccountController.logIn
-);
+    );
 
 router.route('/logOut')
     .get(
         passportConf.checkToken,
         passportConf.jwtVerifier,
         AccountController.logOut
-);
+    );
 
+// get-update user handels
 router.route('/getUser')
     .post(
         AccountController.getUser,
-);
+    );
 
 router.route('/getAllProps')
     .post(
         AccountController.getAllProps
-);
+    );
 
 router.route('/updateUser')
     .post(
         AccountController.updateUser
-);
+    );
 
 
-/****  New ****/
-router.route('/resendVerificationLink')     // Done...
+// verification-forgetpassword-resetpassword routers...
+router.route('/resendVerificationLink') 
     .post(
         AccountController.resendVerificationLink
     );
@@ -50,34 +51,31 @@ router.route('/resendVerificationLink')     // Done...
 router.route('/forgetPassword')
     .post(
         AccountController.forgetPassword
-);
+    );
 
 router.route('/resetPassword')
     .get(
         AccountController.verifyResetPasswordLink
     )
     .post(
-        AccountController.resetPassword
+        AccountController.resetPassword 
     );
 
-
-
-// Verify
 router.route('/verify/:email')
     .get(
         AccountController.verify
-);
+    );
 
 
 // WishList...
 router.route('/addToWishList')
     .post(
         AccountController.addPropToWishlist
-);
+    );
 
 router.route('/delPropFromWishlist')
     .post(
         AccountController.delPropFromWishlist
-);
+    );
 
 module.exports = router; 
