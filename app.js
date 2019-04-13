@@ -1,8 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 
 // DB Config
 const db = require('./configuration/keys').DB_URI;

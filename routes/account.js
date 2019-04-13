@@ -38,6 +38,8 @@ router.route('/getAllProps')
 
 router.route('/updateUser')
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         AccountController.updateUser
     );
 
@@ -45,11 +47,15 @@ router.route('/updateUser')
 // verification-forgetpassword-resetpassword routers...
 router.route('/resendVerificationLink') 
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         AccountController.resendVerificationLink
     );
 
 router.route('/forgetPassword')
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         AccountController.forgetPassword
     );
 
@@ -70,11 +76,15 @@ router.route('/verify/:email')
 // WishList...
 router.route('/addToWishList')
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         AccountController.addPropToWishlist
     );
 
 router.route('/delPropFromWishlist')
     .post(
+        passportConf.checkToken,
+        passportConf.jwtVerifier,
         AccountController.delPropFromWishlist
     );
 

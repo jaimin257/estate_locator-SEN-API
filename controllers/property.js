@@ -253,6 +253,8 @@ module.exports = {
 
     //search property...
     searchProp: async (req, res, next) => {
+        const { noOfRooms, property_amount, property_type } = req.body;
+
         var searchStr = String(req.body.searchStr);
 
         console.log('search');
@@ -263,6 +265,13 @@ module.exports = {
         }
 
         var wordsArray = searchStr.split(/\s+/);
+
+        for(var i=wordsArray.length-1; i>=0; i--) {
+            if(wordsArray[i].length < 2) {
+                wordsArray.splice(i,1);
+            }
+        }
+        
         console.log(searchStr);
 
         await Prop.find()
@@ -273,7 +282,6 @@ module.exports = {
                     var sum = 0;
                     for(var j=0;j<wordsArray.length;j++)
                     {
-                        console.log(wordsArray[j]);
                         var cnt = occurrences(string,wordsArray[j]);
                         sum += cnt;
                     }
@@ -282,13 +290,45 @@ module.exports = {
 
                 props.sort((a, b) => (a.searchScore > b.searchScore) ? -1 : 1);
         
+                for(var i=0;i<props.length;i++) {
+                    if(props[i].searchScore == 0) {
+                        props.splice(i);
+                        break;
+                    }
+                }
+
+                if(property_amount != undefined) {
+                    for(var i=props.length-1; i>=0; i--) {
+                        if(props[i].property_amount != property_amount) {
+                            props.splice(i,1);
+                        }
+                    }
+                }
+
+
+                if(property_type != undefined) {
+                    for(var i=props.length-1; i>=0; i--) {
+                        if((props[i].property_type) != (property_type)) {
+                            props.splice(i,1);
+                        }
+                    }
+                }
+
+                if(noOfRooms != undefined) {
+                    for(var i=props.length-1; i>=0; i--) {
+                        if(props[i].noOfRooms != noOfRooms) {
+                            props.splice(i,1);
+                        }
+                    }
+                }
+
                 return res.status(httpStatusCodes.OK)
                     .json({searchResult: props});
             })
             .catch(err => {
                 console.log(err);
                     res.status(httpStatusCodes.FORBIDDEN)
-                        .send(errorMessages.errorUpdatingProp);
+                        .send(errorMessages.propNotFound);
             });
     }
 };

@@ -374,10 +374,10 @@ module.exports = {
         } else {
             res.status(httpStatusCodes.OK)
             .json({
-                cname1: 'cookiesNamekwt',
+                cname1: 'cookiesNamejwt',
                 cvalue1: token,
                 cexpire: Date(Date.now() + JWT_EXPIRY_TIME * 24 * 60 * 60 * 1000),
-                login : userFound
+                user : userFound
             });
         }
     },
@@ -465,7 +465,7 @@ module.exports = {
 
             if(firstName == 'None' || lastName == 'None' || sex == 'None' || mobileno == 'None' || address == 'None' || country == 'None' || state == 'None' || district == 'None' || city == 'None' || pincode == 'None')
             {
-                res.status(httpStatusCodes.PRECONDITION_FAILED)
+                return res.status(httpStatusCodes.PRECONDITION_FAILED)
                     .send(errorMessages.requiredFieldsEmpty);
             }
 
