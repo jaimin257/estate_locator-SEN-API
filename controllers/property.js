@@ -2,6 +2,12 @@ const httpStatusCodes = require('http-status-codes');
 const errorMessages = require('../configuration/error');
 const Prop = require('../models/property');
 const User = require('../models/user');
+const multer = require('multer');
+const fs = require('fs');
+var fileupload = require("express-fileupload");
+const path = require('path');
+const util = require('util');
+var multiparty = require('multiparty');
 
 function occurrences(string, subString, allowOverlapping) {
     string += "";
@@ -23,6 +29,20 @@ function occurrences(string, subString, allowOverlapping) {
     }
     return n;
 }
+
+var storage = multer.diskStorage({
+    // destination: function(req, file, callback){
+    //     callback(null, './uploads'); // set the destination
+    // },
+    destination: './uploads/',
+    filename: function(req, file, callback){
+        // console.log("uploading " + util.inspect(req));
+        req.body.nofiles = req.body.nofiles -1;
+        console.log("fileinfo " + req.body.pid);
+        console.log("filenum " + req.body.nofiles);
+        callback(null, req.body.pid + '_'  + req.body.nofiles + path.extname(file.originalname)); // set the file name and extension
+    }
+ });
 
 
 module.exports = {
@@ -330,5 +350,36 @@ module.exports = {
                     res.status(httpStatusCodes.FORBIDDEN)
                         .send(errorMessages.propNotFound);
             });
+    },
+    addfile: async (req, res, next) => {
+
+        // console.log("add file " , req.files[0]);
+        // console.log("Ss" + req.body.totalfile);
+        // console.log("Ss" + util.inspect(req.body));
+        // for(let i=0; i<4; i++){
+            var upload = multer({ storage : storage}).array('file1', 100);
+            upload(req,res,function(err) {
+                    if(err) {
+                        console.log(err);
+                        return res.end("Error uploading file.");
+                    }
+                    console.log('done');
+                    // res.end("File is uploaded");
+                    res.redirect("http://localhost:3000/addProp");
+                });
+        // }
+ 
+ 
+ 
+ 
+        
+        // let form = new multiparty.Form();
+        // form.parse(req, function(err, fields, files) {
+        //     console.log("finally " + util.inspect(fields));
+        //     console.log("finally " + util.inspect(files));
+        // });
+        // res.send("YOOOOOOOO");
+ 
     }
+
 };

@@ -126,7 +126,13 @@ module.exports = {
             console.log('validation passed');
             
             // validation passed
-            const userFound = await User.findOne({ email: email });    
+            const userFound = await User.findOne({ email: email })
+                .then()
+                .catch(err => {
+                    console.log(err);
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.userNotExist);
+                });    
 
             if(userFound) {
                 res.status(httpStatusCodes.FORBIDDEN)
@@ -207,26 +213,34 @@ module.exports = {
         await User.findOne({ email })
             .then(user => {
                 if(!user) {
-                    return res.send('<h2>This link has been used already and is now invalid.</h2>');
+                    res.send('<h2>This link has been used already and is now invalid.</h2>');
                 } 
                 else if(user.verified == true) {
                     console.log('already verified...');
-                    return res.status(httpStatusCodes.FORBIDDEN)
+                    res.status(httpStatusCodes.FORBIDDEN)
                         .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
                 }
                 else if (req.query.id === user.randomHash) {
                     console.log('user email address verified succefully');
-                    const newUser = User.findOneAndUpdate({ email }, { verified: true }, { new: true });
-                    return res.status(httpStatusCodes.OK)
-                        .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+                    User.findOneAndUpdate({ email }, { verified: true }, { new: true })
+                        .then(newUser => {
+                            res.status(httpStatusCodes.OK)
+                            .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+                        })
+                        .catch(err => {
+                            console.log('Something went wrong');
+                            res.status(httpStatusCodes.FORBIDDEN)
+                                .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
+                        });
+                    
                 } else {
                     console.log('Something went wrong');
-                    return res.status(httpStatusCodes.FORBIDDEN)
+                    res.status(httpStatusCodes.FORBIDDEN)
                         .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
                 }
             })
             .catch(err => {
-                res.status(httpStatusCodes.FORBIDDEN)
+                 res.status(httpStatusCodes.FORBIDDEN)
                     .send(err);
             });
     },
@@ -292,7 +306,14 @@ module.exports = {
 
             foundUser.resetPasswordToken = randomHash;
             foundUser.resetPasswordExpires = linkExpiryTime;
-            const updatedUser = await foundUser.save();
+            const updatedUser = await foundUser.save()
+                .then(() => {
+                    console.log('user Saved');
+                })
+                .catch(err => {
+                    res.status(httpStatusCodes.FORBIDDEN)
+                        .send(errorMessages.someThingWentWrong);
+                });
 
             await sendForgetPasswordMail(user.email,link)
                 .then(Response => {
@@ -345,7 +366,14 @@ module.exports = {
         user.resetPasswordRequest = undefined;
         user.resetPasswordRequestTime = undefined;    
 
-        await user.save();
+        await user.save()
+            .then(() => {
+                console.log('user Saved');
+            })
+            .catch(err => {
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.someThingWentWrong);
+            });
 
         await sendPasswordChangedMail(user.email)
         .then(Response => {
@@ -366,7 +394,14 @@ module.exports = {
         console.log('LogIn...');
         console.log('email : ' + email);
 
-        const userFound = await User.findOne({ email });
+        const userFound = await User.findOne({ email })
+            .then(() => {
+                console.log('user found');
+            })
+            .catch(err => {
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.someThingWentWrong);
+            });
 
         if(!userFound) {
             return res.status(httpStatusCodes.FORBIDDEN)

@@ -1,0 +1,86 @@
+const httpStatusCodes = require('http-status-codes');
+const errorMessages = require('../configuration/error');
+const Prop = require('../models/property');
+const User = require('../models/user');
+const multer = require('multer');
+const fs = require('fs');
+var fileupload = require("express-fileupload");
+const path = require('path');
+const util = require('util');
+var multiparty = require('multiparty');
+
+
+
+function occurrences(string, subString, allowOverlapping) {
+   string += "";
+   subString += "";
+
+   //If string is empty...
+   if (subString.length <= 0) return (string.length + 1);
+
+   var n = 0,
+       pos = 0,
+       step = allowOverlapping ? 1 : subString.length;
+
+   while (true) {
+       pos = string.indexOf(subString, pos);
+       if (pos >= 0) {
+           ++n;
+           pos += step;
+       } else break;
+   }
+   return n;
+}
+
+
+var storage = multer.diskStorage({
+   // destination: function(req, file, callback){
+   //     callback(null, './uploads'); // set the destination
+   // },
+   destination: './uploads/',
+   filename: function(req, file, callback){
+       // console.log("uploading " + util.inspect(req));
+       req.body.nofiles = req.body.nofiles -1;
+       console.log("fileinfo " + req.body.pid);
+       console.log("filenum " + req.body.nofiles);
+       callback(null, req.body.pid + '_'  + req.body.nofiles + path.extname(file.originalname)); // set the file name and extension
+   }
+});
+
+module.exports = {
+   getMyProps: async (req, res, next) => {
+       const { user } = req.body;
+
+       console.log('getMyProps');
+
+       const foundProps = await Prop.find({ seller: user })
+           .then(function (props) {
+               res.status(httpStatusCodes.OK)
+                   .send(props);
+           })
+           .catch(err => {
+               res.status(httpStatusCodes.FORBIDDEN)
+                   .send(errorMessages.problemFatchingProps);  
+           });
+   },
+
+   getThisProp: async (req, res, next) => {
+       const { propId } = req.query;
+
+       console.log('getThisProp : '+propId);
+
+       const foundProp = await Prop.findById(propId);
+
+       if(!foundProp) {
+           return res.status(httpStatusCodes.FORBIDDEN)
+               .send(errorMessages.propNotFound);  
+       } else {
+           return res.status(httpStatusCodes.OK)
+               .json({ prop: foundProp });
+       }
+   },
+
+   getAllProps: async (req, res, next) => {
+       console.log('getAllProps...');
+
+       await Prop.find({})

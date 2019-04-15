@@ -47,10 +47,14 @@ router.route('/getThisProp')
     .get(
         PropController.getThisProp
     );
-
 router.route('/searchProp')
     .post(
         PropController.searchProp
+    );
+
+router.route('/addfile')
+    .post(
+        PropController.addfile
     );
 
 module.exports = router; 
