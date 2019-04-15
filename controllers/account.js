@@ -7,11 +7,17 @@ const mustache = require('mustache');
 const bcrypt = require('bcryptjs');
 const httpStatusCodes = require('http-status-codes');
 const JWT = require(`jsonwebtoken`);
+const util = require('util');
 
 const {
     JWT_SECRET,
     JWT_EXPIRY_TIME,
     JWT_ISSUER,
+    userBlockageTimeForTooManySignUpRequests,
+    maximumSignUpRequestBeforeBlocking,
+    RESET_PASSWORD_EXPIRY_TIME,
+    NEWS_EXPIRY_TIME,
+    NOTIFICATION_EXPIRY_TIME,
     cookiesName,
 } = require('../configuration');
 
@@ -33,7 +39,7 @@ const sendForgetPasswordMail = async (email,link) => {
         link: link
     };
 
-    let mailBody = mustache.render(mailTemplates.signUp.body, tags);
+    let mailBody = mustache.render(mailTemplates.forgetPassword.body, options);
     const mailOptions = {
         from: mailAccountUserName,
         to: email,
@@ -58,7 +64,7 @@ const sendPasswordChangedMail = async (email) => {
         email: email,
     };
 
-    let mailBody = mustache.render(mailTemplates.signUp.body, options);
+    let mailBody = mustache.render(mailTemplates.passwordChanged.body, options);
     const mailOptions = {
         from: mailAccountUserName,
         to: email,
@@ -255,7 +261,7 @@ module.exports = {
         const resendVerificationLink =  'locolhost://1443' + '/account/resendVerificationLink/' + user.email;
 
         // save user
-        await sendVerificationMail(user.email,link)
+        await sendVerificationMail(email,link)
             .then(Response => {
                 res.status(HttpStatus.CREATED)
                     .end('<h1>Verification link sent to email ' + email + ' please verify your account</h1><br><a href=' + resendVerificationLink + '>Click here to resend verification link</a>');
@@ -269,55 +275,23 @@ module.exports = {
 
     // Forget password
     forgetPassword: async (req, res, next) => {
-        const {email} = req.params;
-
-        const foundUser = User.findOne({ email });
+        const {email} = req.body;
+        console.log("email : " + email);
+        var foundUser = await User.findOne({ email });
+        console.log(foundUser);
 
         if (!foundUser) {
-            return res.sendStatus(HttpStatus.FORBIDDEN);
+            return res.sendStatus(httpStatusCodes.FORBIDDEN);
         } else {
-            let randomHash;
-            const linkExpiryTime = new Date();
-            linkExpiryTime.setHours(linkExpiryTime.getHours() + RESET_PASSWORD_EXPIRY_TIME);
-
-            if (foundUser.resetPasswordRequestTime) {
-                const timeNotAllowed = new Date();
-                timeNotAllowed.setHours(timeNotAllowed.getHours() - userBlockageTimeForTooManySignUpRequests);
-
-                if (foundUser.resetPasswordRequestTime <= timeNotAllowed) {
-                    foundUser.resetPasswordRequestTime = new Date();
-                    randomHash = randomstring.generate();
-                    foundUser.resetPasswordRequest = 1;
-                } else if (foundUser.resetPasswordRequest >= maximumSignUpRequestBeforeBlocking) {
-                    return res.status(HttpStatus.FORBIDDEN)
-                        .send(errorMessages.blockUser);
-                } else {
-                    randomHash = foundUser.resetPasswordToken;
-                    foundUser.resetPasswordRequest++;
-                }
-            } else {
-                randomHash = randomstring.generate();
-                foundUser.resetPasswordRequestTime = new Date();
-                foundUser.resetPasswordRequest = 1;
-            }
-
             //forget password link generator
-            const link = 'locolhost://1443' + '/account/resetPassword/' + user.email + '?id=' + user.randomHash;
+            console.log("user ni id " + foundUser._id);
+            const link = 'http://localhost:3000' + '/forgotpassword/' + foundUser._id;
 
-            foundUser.resetPasswordToken = randomHash;
-            foundUser.resetPasswordExpires = linkExpiryTime;
-            const updatedUser = await foundUser.save()
-                .then(() => {
-                    console.log('user Saved');
-                })
-                .catch(err => {
-                    res.status(httpStatusCodes.FORBIDDEN)
-                        .send(errorMessages.someThingWentWrong);
-                });
+    
 
-            await sendForgetPasswordMail(user.email,link)
+            await sendForgetPasswordMail(email,link)
                 .then(Response => {
-                    res.status(HttpStatus.OK)
+                    res.status(httpStatusCodes.OK)
                         .end('Response: Password reset link sent');
                 })
                 .catch(err => {
@@ -328,25 +302,19 @@ module.exports = {
         }
     },
 
-    verifyResetPasswordLink: async (req, res, next) => {
-        const { email } = req.params;
-        const user = await User.findOne({ email });
-
-        if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
-            return res.status(httpStatusCodes.FORBIDDEN)
-                .end('<h2>Password reset token is invalid or has expired.</h2>');
-        } else {
-            return res.status(httpStatusCodes.OK)
-                .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
-        }
-    },
-
     resetPassword: async (req, res, next) => {
-        const { email } = req.params;
-        const { password } = req.body.password;
-        const user = await User.findOne({ email });
+        const { email, uid } = req.body;
+        const { password } = req.body;
+        let user = await User.findOne({ email : email });
+        console.log(email + ' ' + password);
 
-        if (!user || user.resetPasswordToken !== req.query.id || user.resetPasswordExpires < new Date()) {
+        if (!user) {
+            console.log("return1");
+            return res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.passwordResetTokenInvalid);
+        }
+        if (user._id != uid) {
+            console.log("returnyo");
             return res.status(httpStatusCodes.FORBIDDEN)
                 .send(errorMessages.passwordResetTokenInvalid);
         }
@@ -355,36 +323,28 @@ module.exports = {
         bcrypt.genSalt(10, (err, salt) => 
             bcrypt.hash(password, salt, (err, hash) => {
                 if(err) throw err;
+                    User.findOneAndUpdate({_id : user._id} ,{password : hash})
+                        .then(() => {
+                            console.log('user Saved');
+                        })
+                        .catch(err => {
+                            console.log("return2");
+                            res.status(httpStatusCodes.FORBIDDEN)
+                                .send(errorMessages.someThingWentWrong);
+                        });
 
-                // Set password to hashed value
-                user.password = hash;
+                    sendPasswordChangedMail(email)
+                    .then(Response => {
+                        res.status(httpStatusCodes.OK)
+                            .end('Response: Password changed');
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(errorMessages.emailNotSent);
+                    });
+
             }));
-
-       // user.password = await hashPassword(req.body.password);
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpires = undefined;
-        user.resetPasswordRequest = undefined;
-        user.resetPasswordRequestTime = undefined;    
-
-        await user.save()
-            .then(() => {
-                console.log('user Saved');
-            })
-            .catch(err => {
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.someThingWentWrong);
-            });
-
-        await sendPasswordChangedMail(user.email)
-        .then(Response => {
-            res.status(HttpStatus.OK)
-                .end('Response: Password changed');
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(httpStatusCodes.FORBIDDEN)
-                .send(errorMessages.emailNotSent);
-        });
     },  
 
     logIn: async (req, res, next) => {

@@ -13,7 +13,7 @@
         "subject": "Password Reset Link",
         "cc": [],
         "bcc": [],
-        "body": "Hello {{email}}, <br>Please click on the link below to reset your password. <br><a href={{link}}>Click here to reset password</a>"
+        "body": "Hello, <br>Please click on the link below to reset your password. <br><a href={{link}}>Click here to reset password</a>"
       },
       "passwordChanged": {
         "templateId": "c8ks30lck7cjkrknz25c4l0dh",

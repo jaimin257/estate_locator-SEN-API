@@ -54,15 +54,10 @@ router.route('/resendVerificationLink')
 
 router.route('/forgetPassword')
     .post(
-        passportConf.checkToken,
-        passportConf.jwtVerifier,
         AccountController.forgetPassword
     );
 
 router.route('/resetPassword')
-    .get(
-        AccountController.verifyResetPasswordLink
-    )
     .post(
         AccountController.resetPassword 
     );
