@@ -67,14 +67,7 @@ module.exports = {
 
         console.log('getThisProp : '+propId);
 
-        const foundProp = await Prop.findById(propId)
-            .then(() => {
-                console.log('prop found');
-            })
-            .catch(err => {
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.someThingWentWrong);
-            });
+        const foundProp = await Prop.findById(propId);
 
         if(!foundProp) {
             return res.status(httpStatusCodes.FORBIDDEN)

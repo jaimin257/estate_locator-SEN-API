@@ -394,14 +394,7 @@ module.exports = {
         console.log('LogIn...');
         console.log('email : ' + email);
 
-        const userFound = await User.findOne({ email })
-            .then(() => {
-                console.log('user found');
-            })
-            .catch(err => {
-                res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.someThingWentWrong);
-            });
+        const userFound = await User.findOne({ email });
 
         if(!userFound) {
             return res.status(httpStatusCodes.FORBIDDEN)

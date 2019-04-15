@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 const PORT = process.nextTick.PORT || 1433;
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
@@ -28,3 +29,4 @@ app.listen(PORT, console.log(`Server started on port ${PORT}`));
 //Routes
 app.use('/account', require('./routes/account')); 
 app.use('/property', require('./routes/property')); 
+app.use('/static', express.static('uploads'));

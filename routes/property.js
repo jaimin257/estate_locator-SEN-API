@@ -5,8 +5,8 @@ const passportConf = require('../passport');
 const PropController = require('../controllers/property');
 
 // Get your properties
-router.route('/')
-    .get(
+router.route('/getMyProps')
+    .post(
         passportConf.checkToken,
         passportConf.jwtVerifier,
         PropController.getMyProps
