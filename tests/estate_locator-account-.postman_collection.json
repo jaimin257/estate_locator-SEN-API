@@ -1,0 +1,1339 @@
+{
+	"info": {
+		"_postman_id": "c9fbc664-3303-4527-83a6-ad614e8c4544",
+		"name": "estate_locator/account/",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:1433/account/register (Invalid - User already exist)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "73abecea-cdcd-43ea-808a-9fcf450499fa",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"name": "Content-Type",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "password2",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "'Jaimin'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "'Chaudhari'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "sex",
+							"value": "'Male'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "mobileno",
+							"value": "'9512867037'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "'G-318, Daiict, near Infocity'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "country",
+							"value": "'India'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "state",
+							"value": "'Gujarat'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "district",
+							"value": "'Gandhinagar'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "city",
+							"value": "'Mansa'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "pincode",
+							"value": "'382007'",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/register",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"register"
+					]
+				},
+				"description": "register request"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/account/register (valid)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "73abecea-cdcd-43ea-808a-9fcf450499fa",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "darkfighter257@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "password2",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "'Jaimin'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "'Chaudhari'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "sex",
+							"value": "'Male'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "mobileno",
+							"value": "'9512867037'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "'G-318, Daiict, near Infocity'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "country",
+							"value": "'India'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "state",
+							"value": "'Gujarat'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "district",
+							"value": "'Gandhinagar'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "city",
+							"value": "'Mansa'",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "pincode",
+							"value": "'382007'",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/register",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"register"
+					]
+				},
+				"description": "register request"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/account/login  (right password)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bb93d6cf-6550-4f77-9ca5-d4f07a155c6c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "firstName",
+							"value": "jac",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "jac",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "password2",
+							"value": "123456123",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "gender",
+							"value": "male",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "contactNo",
+							"value": "789456123",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/login",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "http://localhost:1433/account/login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"name": "Content-Type",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "jac",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "lastName",
+									"value": "jac",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "'jaiminchaudhary42@gmail.com'",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "'123456123'",
+									"type": "text"
+								},
+								{
+									"key": "password2",
+									"value": "123456123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "contactNo",
+									"value": "789456123",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:1433/account/logIn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1433",
+							"path": [
+								"account",
+								"logIn"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjAwMzg2MDU4LCJleHAiOjE1NTQyODY3ODYwNTh9.GN0dbt-IBz5v6uVrTrsT41yTjDw5JydzEEOnERL_Slk; Path=/; Expires=Wed, 03 Apr 2019 10:19:46 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "308"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"134-Vs/D9KR51MdQxDkBC1q1BCtbBSE\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 02 Apr 2019 10:19:46 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user\": {\n        \"verified\": false,\n        \"addedExtraInfo\": false,\n        \"properties\": [],\n        \"_id\": \"5ca331f66c1fad263805764a\",\n        \"email\": \"'jaiminchaudhary42@gmail.com'\",\n        \"password\": \"$2a$10$LQTVpEOVxelOFXoGnDaIKe6xQrNoiNnCl8XKKsnFG0zB9RQlRfcxy\",\n        \"createdOn\": \"2019-04-02T09:57:10.286Z\",\n        \"randomHash\": \"0hWL3r7ful85FhGrLhHhYrf4seKyFk7J\",\n        \"__v\": 0\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "http://localhost:1433/account/login  (wrong password)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "316efa00-7c32-4544-a09f-f5e8b8cb3c5e",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "firstName",
+							"value": "jac",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "jac",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456123",
+							"type": "text"
+						},
+						{
+							"key": "password2",
+							"value": "123456123",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "gender",
+							"value": "male",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "contactNo",
+							"value": "789456123",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:1433/account/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1433",
+					"path": [
+						"account",
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "http://localhost:1433/account/login",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"name": "Content-Type",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjb2Rld29ya3IiLCJzdWIiOiI1YzBjYmMxOTU3NjU1NTBlMGM4OTU2ZmIiLCJpYXQiOjE1NDQzMzg0NTcxMjQsImV4cCI6MTU0NDQyNDg1NzEyNH0.DMNA7U9IXInBBE8DvtT8_z-NmHf4vTSe34dWGooRI9Y",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "jac",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "lastName",
+									"value": "jac",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "email",
+									"value": "'jaiminchaudhary42@gmail.com'",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "'123456123'",
+									"type": "text"
+								},
+								{
+									"key": "password2",
+									"value": "123456123",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "contactNo",
+									"value": "789456123",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:1433/account/logIn",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1433",
+							"path": [
+								"account",
+								"logIn"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "X-Powered-By",
+							"value": "Express"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjAwMzg2MDU4LCJleHAiOjE1NTQyODY3ODYwNTh9.GN0dbt-IBz5v6uVrTrsT41yTjDw5JydzEEOnERL_Slk; Path=/; Expires=Wed, 03 Apr 2019 10:19:46 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "308"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"134-Vs/D9KR51MdQxDkBC1q1BCtbBSE\""
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 02 Apr 2019 10:19:46 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"user\": {\n        \"verified\": false,\n        \"addedExtraInfo\": false,\n        \"properties\": [],\n        \"_id\": \"5ca331f66c1fad263805764a\",\n        \"email\": \"'jaiminchaudhary42@gmail.com'\",\n        \"password\": \"$2a$10$LQTVpEOVxelOFXoGnDaIKe6xQrNoiNnCl8XKKsnFG0zB9RQlRfcxy\",\n        \"createdOn\": \"2019-04-02T09:57:10.286Z\",\n        \"randomHash\": \"0hWL3r7ful85FhGrLhHhYrf4seKyFk7J\",\n        \"__v\": 0\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "http://localhost:1433/account/getUser (right userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d7f11eeb-eab8-4b42-b8e3-4c1949456fa5",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb09be0242af36352150365",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/getUser",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"getUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/account/getUser (wrong userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c772e1dc-f17c-4e03-ad41-3e06e1729b98",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cac61c719d9e75154631a43",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/getUser",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"getUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/account/updateUser (valid UserId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "735f1807-5297-4395-81cf-b2527f83b8ec",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "Jaimin",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "USSSA",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/updateUser",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"updateUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/account/updateUser (Invalid UserId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "735f1807-5297-4395-81cf-b2527f83b8ec",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb47fboijuhghjkjhjkjcb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "firstName",
+							"value": "Jaimin",
+							"type": "text"
+						},
+						{
+							"key": "country",
+							"value": "USSSA",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/updateUser",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"updateUser"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/getAllProps (valid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a6747bcb-6272-4911-afea-e421b9c28091",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb4bc13c98fe04ec886a44f",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/getAllProps",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"getAllProps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/getAllProps (Invalid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a6747bcb-6272-4911-afea-e421b9c28091",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb4bc13jjjjjjj4ec886a44f",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/getAllProps",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"getAllProps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/forgetPassword (valid emailId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70ba3fc5-4cea-4ce2-ba00-fcfe491cf0cb",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/forgetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"forgetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/forgetPassword (Invalid emailId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70ba3fc5-4cea-4ce2-ba00-fcfe491cf0cb",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "randomgmail_okai@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/forgetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"forgetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/resetPassword (valid email, uid)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f94df0c-e64e-4faf-95b5-32a9651497db",
+						"exec": [
+							"pm.test(\"Status code us 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "uid",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/resetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"resetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/resetPassword (valid email, Invalid uid)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f94df0c-e64e-4faf-95b5-32a9651497db",
+						"exec": [
+							"pm.test(\"Status code us 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "jaiminchaudhary42@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "uid",
+							"value": "5cb47fb9ajjjj0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/resetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"resetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/resetPassword (Invalid email, uid)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f94df0c-e64e-4faf-95b5-32a9651497db",
+						"exec": [
+							"pm.test(\"Status code us 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "randomemail_okai@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "uid",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/resetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"resetPassword"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/account/resetPassword (Invalid email, Invalid uid)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9f94df0c-e64e-4faf-95b5-32a9651497db",
+						"exec": [
+							"pm.test(\"Status code us 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "randomEmail_okai@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "uid",
+							"value": "5cb47fbvhbj9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/account/resetPassword",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"account",
+						"resetPassword"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

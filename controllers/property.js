@@ -67,15 +67,15 @@ module.exports = {
 
         console.log('getThisProp : '+propId);
 
-        const foundProp = await Prop.findById(propId);
-
-        if(!foundProp) {
-            return res.status(httpStatusCodes.FORBIDDEN)
-                .send(errorMessages.propNotFound);  
-        } else {
-            return res.status(httpStatusCodes.OK)
+        await Prop.findById(propId)
+            .then(foundProp => {
+                res.status(httpStatusCodes.OK)
                 .json({ prop: foundProp });
-        }
+            })
+            .catch(err => {
+                res.status(httpStatusCodes.FORBIDDEN)
+                    .send(errorMessages.propNotFound);  
+            });
     },
 
     getAllProps: async (req, res, next) => {
@@ -214,6 +214,9 @@ module.exports = {
                                 res.status(httpStatusCodes.FORBIDDEN)
                                     .send(err);
                             });
+                    } else {
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(errorMessages.propNotFound);
                     }
                 }
             })
