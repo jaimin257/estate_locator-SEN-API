@@ -1,0 +1,1176 @@
+{
+	"info": {
+		"_postman_id": "5d21e9ee-24ed-47cb-b068-f3110de29bc5",
+		"name": "estate_locator/property/",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:1433/property/addProp (Valid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "72c3b608-2601-4ed7-ba69-c1639e87ed3b",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "propertyName",
+							"value": "no",
+							"type": "text"
+						},
+						{
+							"key": "propertyLocation",
+							"value": "amdavad",
+							"type": "text"
+						},
+						{
+							"key": "constructionStatus",
+							"value": "Running",
+							"type": "text"
+						},
+						{
+							"key": "seller",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A++ kdskskd",
+							"type": "text"
+						},
+						{
+							"key": "property_amount",
+							"value": "77787845",
+							"type": "text"
+						},
+						{
+							"key": "contract_type",
+							"value": "hand to leg",
+							"type": "text"
+						},
+						{
+							"key": "floor",
+							"value": "500",
+							"type": "text"
+						},
+						{
+							"key": "carpet_area",
+							"value": "455556",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "Gujarat",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "no why this",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "no no no why are you shut the fuck up college",
+							"type": "text"
+						},
+						{
+							"key": "noOfRooms",
+							"value": "6",
+							"type": "text"
+						},
+						{
+							"key": "furnishedType",
+							"value": "done",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/addProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"addProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/addProp (Invalid seller)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "72c3b608-2601-4ed7-ba69-c1639e87ed3b",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "propertyName",
+							"value": "no",
+							"type": "text"
+						},
+						{
+							"key": "propertyLocation",
+							"value": "amdavad",
+							"type": "text"
+						},
+						{
+							"key": "constructionStatus",
+							"value": "Running",
+							"type": "text"
+						},
+						{
+							"key": "seller",
+							"value": "5cb47fbdfgh9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A++ kdskskd",
+							"type": "text"
+						},
+						{
+							"key": "property_amount",
+							"value": "77787845",
+							"type": "text"
+						},
+						{
+							"key": "contract_type",
+							"value": "hand to leg",
+							"type": "text"
+						},
+						{
+							"key": "floor",
+							"value": "500",
+							"type": "text"
+						},
+						{
+							"key": "carpet_area",
+							"value": "455556",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "Gujarat",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "no why this",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "no no no why are you shut the fuck up college",
+							"type": "text"
+						},
+						{
+							"key": "noOfRooms",
+							"value": "6",
+							"type": "text"
+						},
+						{
+							"key": "furnishedType",
+							"value": "done",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/addProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"addProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/addProp (Invalid- (some empty field))",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "72c3b608-2601-4ed7-ba69-c1639e87ed3b",
+						"exec": [
+							"pm.test(\"Status code is 412\", function () {",
+							"    pm.response.to.have.status(412);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "propertyName",
+							"value": "no",
+							"type": "text"
+						},
+						{
+							"key": "propertyLocation",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "constructionStatus",
+							"value": "Running",
+							"type": "text"
+						},
+						{
+							"key": "seller",
+							"value": "5cb47fbdfgh9a0158c0cb0ad6915",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A++ kdskskd",
+							"type": "text"
+						},
+						{
+							"key": "property_amount",
+							"value": "77787845",
+							"type": "text"
+						},
+						{
+							"key": "contract_type",
+							"value": "hand to leg",
+							"type": "text"
+						},
+						{
+							"key": "floor",
+							"value": "500",
+							"type": "text"
+						},
+						{
+							"key": "carpet_area",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "state",
+							"value": "Gujarat",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "no why this",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "no no no why are you shut the fuck up college",
+							"type": "text"
+						},
+						{
+							"key": "noOfRooms",
+							"value": "6",
+							"type": "text"
+						},
+						{
+							"key": "furnishedType",
+							"value": "done",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/addProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"addProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/:propId",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{link}}/property/getThisProp?propId=5caf62a8844f821c4c89f5c5",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"getThisProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5caf62a8844f821c4c89f5c5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{link}}/property/all",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/searchProp  (valid searchString)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff767212-6b1a-48cc-b2cf-d157b249cd74",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "searchStr",
+							"value": "daiict",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A+",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/searchProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"searchProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/searchProp  (empty searchString)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff767212-6b1a-48cc-b2cf-d157b249cd74",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "searchStr",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A+",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/searchProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"searchProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/searchProp  (Invalid searchString)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff767212-6b1a-48cc-b2cf-d157b249cd74",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "searchStr",
+							"value": "sdxfcgvbhjkdsdfxgchgvjh",
+							"type": "text"
+						},
+						{
+							"key": "property_type",
+							"value": "A+",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/searchProp",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"searchProp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/removeProp (Invalid propId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "226835b6-23ce-4ced-aebc-8f0808aa753f",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/removeProp?propId=5cac5c85a0f08f4d1ce55c34",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"removeProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cac5c85a0f08f4d1ce55c34"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/removeProp (Valid request)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "226835b6-23ce-4ced-aebc-8f0808aa753f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb47fb9a0158c0cb0ad6915",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/removeProp?propId=5cb5b64001e1673a1436c6b5",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"removeProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5b64001e1673a1436c6b5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/removeProp (Wrong userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "226835b6-23ce-4ced-aebc-8f0808aa753f",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb59855efa036120c54f55b",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/removeProp?propId=5cb5b64001e1673a1436c6b5",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"removeProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5b64001e1673a1436c6b5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/removeProp (Invalid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "226835b6-23ce-4ced-aebc-8f0808aa753f",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb59855efa036120c54f55b",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/removeProp?propId=5cb5fghb64001e1673a1436c6b5",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"removeProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5fghb64001e1673a1436c6b5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1433/property/removeProp (Invalid userId and propId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "226835b6-23ce-4ced-aebc-8f0808aa753f",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "userId",
+							"value": "5cb59855eefa036120c54f55bre",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/removeProp?propId=5cb5fghdfb64001e1673a1436c6b5",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"removeProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5fghdfb64001e1673a1436c6b5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/property/getMyProps  (Valid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3357d86d-6d1f-41c2-8579-79e1ecfc6bde",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "5cb4bc13c98fe04ec886a44f",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/getMyProps",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"getMyProps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/property/getMyProps  (Invalid userId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3357d86d-6d1f-41c2-8579-79e1ecfc6bde",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJlc3RhdGUtbG9jYXRvciIsInN1YiI6IidqYWltaW5jaGF1ZGhhcnk0MkBnbWFpbC5jb20nIiwiaWF0IjoxNTU0MjU3MzM3NDA1LCJleHAiOjE1NTQzNDM3Mzc0MDV9.WZQFj_-xxnPk_d4bc4O8Lx9_bUdyzJYJHxzUjdZVyEk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "user",
+							"value": "5cb4bc1cvbnm,3c98fe04ec886a44f",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{link}}/property/getMyProps",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"getMyProps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/property/all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e36e777d-d408-4d23-b4c8-87d26fb2fdd7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{link}}/property/all",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/property/getThisProp (valid propId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "14e4c3e2-3528-40c2-857c-0a91dc9ae028",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{link}}/property/getThisProp?propId=5cb5b67a01e1673a1436c6b7",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"getThisProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5b67a01e1673a1436c6b7"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{link}}/property/getThisProp (Invalid propId)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "14e4c3e2-3528-40c2-857c-0a91dc9ae028",
+						"exec": [
+							"pm.test(\"Status code is 403\", function() {",
+							"    pm.response.to.have.status(403);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{link}}/property/getThisProp?propId=5cb5b6dfg7a01e1673a1436c6b7",
+					"host": [
+						"{{link}}"
+					],
+					"path": [
+						"property",
+						"getThisProp"
+					],
+					"query": [
+						{
+							"key": "propId",
+							"value": "5cb5b6dfg7a01e1673a1436c6b7"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
