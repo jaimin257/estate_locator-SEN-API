@@ -214,6 +214,9 @@ module.exports = {
                                 res.status(httpStatusCodes.FORBIDDEN)
                                     .send(err);
                             });
+                    } else {
+                        res.status(httpStatusCodes.FORBIDDEN)
+                            .send(errorMessages.propNotFound);
                     }
                 }
             })

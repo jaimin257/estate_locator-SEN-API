@@ -278,7 +278,7 @@ module.exports = {
         const {email} = req.body;
         console.log("email : " + email);
         var foundUser = await User.findOne({ email });
-        console.log(foundUser);
+      //  console.log(foundUser);
 
         if (!foundUser) {
             return res.sendStatus(httpStatusCodes.FORBIDDEN);
@@ -418,7 +418,7 @@ module.exports = {
             .catch(err => {
                 console.log(err);
                 res.status(httpStatusCodes.FORBIDDEN)
-                    .send(errorMessages.propNotFound);
+                    .send(errorMessages.userNotExist);
             });
     },
 
