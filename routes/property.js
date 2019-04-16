@@ -57,4 +57,9 @@ router.route('/addfile')
         PropController.addfile
     );
 
+router.route('/searchSuggestion')
+    .post(
+        PropController.searchSuggestion
+    );
+
 module.exports = router; 

@@ -273,12 +273,12 @@ module.exports = {
 
     //search property...
     searchProp: async (req, res, next) => {
-        const { noOfRooms, property_amount, property_type } = req.body;
+        const { noOfRooms, property_amount, property_type, contract_type } = req.body;
 
         var searchStr = String(req.body.searchStr);
 
         console.log('search');
-
+        console.log(noOfRooms + ' ' +property_amount + ' ' + property_type + ' ' + contract_type);
         while(searchStr.indexOf("'")> -1)
         {
             searchStr = searchStr.replace("'","");
@@ -317,16 +317,15 @@ module.exports = {
                     }
                 }
 
-                if(property_amount != undefined) {
+                if(property_amount != undefined && property_amount != 'Budget') {
                     for(var i=props.length-1; i>=0; i--) {
-                        if(props[i].property_amount != property_amount) {
+                        if(props[i].property_amount <= property_amount) {
                             props.splice(i,1);
                         }
                     }
                 }
 
-
-                if(property_type != undefined) {
+                if(property_type != undefined && property_type != 'Property Type') {
                     for(var i=props.length-1; i>=0; i--) {
                         if((props[i].property_type) != (property_type)) {
                             props.splice(i,1);
@@ -334,9 +333,17 @@ module.exports = {
                     }
                 }
 
-                if(noOfRooms != undefined) {
+                if(noOfRooms != undefined && noOfRooms != 'Number of Rooms') {
                     for(var i=props.length-1; i>=0; i--) {
                         if(props[i].noOfRooms != noOfRooms) {
+                            props.splice(i,1);
+                        }
+                    }
+                }
+
+                if(contract_type != undefined ) {
+                    for(var i=props.length-1; i>=0; i--) {
+                        if(props[i].contract_type != contract_type) {
                             props.splice(i,1);
                         }
                     }
@@ -367,19 +374,27 @@ module.exports = {
                     // res.end("File is uploaded");
                     res.redirect("http://localhost:3000/addProp");
                 });
-        // }
- 
- 
- 
- 
-        
-        // let form = new multiparty.Form();
-        // form.parse(req, function(err, fields, files) {
-        //     console.log("finally " + util.inspect(fields));
-        //     console.log("finally " + util.inspect(files));
-        // });
-        // res.send("YOOOOOOOO");
- 
+    },
+
+
+    searchSuggestion : async (req, res, next) => {
+        Prop.find({ propertyName: { $regex : ".*"+ req.body.search +".*", $options:'i' } }, function(err, result){
+            if(!err){
+                var suggestions = [];
+                for(var i=0;i<result.length;i++) {
+                    var index = ((result[i].propertyName).toLowerCase()).indexOf((req.body.search).toLowerCase());
+                    if(index == 0){
+                        suggestions.push(result[i].propertyName);
+                    }
+                }
+                return res.status(httpStatusCodes.OK).json({result: suggestions});
+            }
+            else {
+                res.status(httpStatusCodes.FORBIDDEN)
+                .send(errorMessages.someThingWentWrong);
+            }
+        });
     }
+
 
 };
