@@ -14,7 +14,7 @@ function occurrences(string, subString, allowOverlapping) {
     subString += "";
 
     //If string is empty...
-    if (subString.length <= 0) return (string.length + 1);
+    if (subString.length <= 0) return (0);
 
     var n = 0,
         pos = 0,
