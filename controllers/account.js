@@ -219,30 +219,30 @@ module.exports = {
         await User.findOne({ email })
             .then(user => {
                 if(!user) {
-                    res.send('<h2>This link has been used already and is now invalid.</h2>');
+                    res.send('This link has been used already and is now invalid.');
                 } 
                 else if(user.verified == true) {
                     console.log('already verified...');
                     res.status(httpStatusCodes.FORBIDDEN)
-                        .end('<h2>You are already verified...! Maybe love is fake!!!</h2>');
+                        .end('You are already verified...! Maybe love is fake!!!');
                 }
                 else if (req.query.id === user.randomHash) {
                     console.log('user email address verified succefully');
                     User.findOneAndUpdate({ email }, { verified: true }, { new: true })
                         .then(newUser => {
                             res.status(httpStatusCodes.OK)
-                            .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "http://localhost:3000/login">SignIn</a>');
+                            .end('You are succefully verified. Now go and signIn by clicking given link. ');
                         })
                         .catch(err => {
                             console.log('Something went wrong');
                             res.status(httpStatusCodes.FORBIDDEN)
-                                .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
+                                .end('Something went wrong! Maybe love is fake!!!');
                         });
                     
                 } else {
                     console.log('Something went wrong');
                     res.status(httpStatusCodes.FORBIDDEN)
-                        .end('<h2>Something went wrong! Maybe love is fake!!!</h2>');
+                        .end('Something went wrong! Maybe love is fake!!!');
                 }
             })
             .catch(err => {
@@ -264,7 +264,7 @@ module.exports = {
         await sendVerificationMail(email,link)
             .then(Response => {
                 res.status(HttpStatus.CREATED)
-                    .end('<h1>Verification link sent to email ' + email + ' please verify your account</h1><br><a href=' + resendVerificationLink + '>Click here to resend verification link</a>');
+                    .end('Verification link sent to email .. please verify your account');
             })
             .catch(err => {
                 console.log('err*********************');

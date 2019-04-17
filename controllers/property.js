@@ -41,9 +41,9 @@ var storage = multer.diskStorage({
         console.log("fileinfo " + req.body.pid);
         console.log("filenum " + req.body.nofiles);
         let ext = path.extname(file.originalname);
-        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
-            return callback(null);
-        }
+        // if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+        //     return callback(new Error("something went wrong"));
+        // }
         callback(null, req.body.pid + '_'  + req.body.nofiles + path.extname(file.originalname)); // set the file name and extension
     }
  });
@@ -282,7 +282,7 @@ module.exports = {
     searchProp: async (req, res, next) => {
         const { noOfRooms, property_amount, property_type, contract_type } = req.body;
 
-        var searchStr = String(req.body.searchStr);
+        var searchStr = String(req.body.searchStr).toLowerCase();
 
         console.log('search');
         console.log(noOfRooms + ' ' +property_amount + ' ' + property_type + ' ' + contract_type);
@@ -305,7 +305,7 @@ module.exports = {
             .then(props => {
                 for(var i=0;i<props.length;i++)
                 {
-                    var string = ""+String(props[i].description)+"";
+                    var string = ""+String(props[i].description.toLowerCase())+"";
                     var sum = 0;
                     for(var j=0;j<wordsArray.length;j++)
                     {
