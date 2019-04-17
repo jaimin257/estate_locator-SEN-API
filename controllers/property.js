@@ -397,7 +397,6 @@ module.exports = {
                 .send(errorMessages.someThingWentWrong);
             }
         });
-    }
-
-
+    },
+    occurrences
 };
