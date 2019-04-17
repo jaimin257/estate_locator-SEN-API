@@ -40,6 +40,10 @@ var storage = multer.diskStorage({
         req.body.nofiles = req.body.nofiles -1;
         console.log("fileinfo " + req.body.pid);
         console.log("filenum " + req.body.nofiles);
+        let ext = path.extname(file.originalname);
+        if(ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+            return callback(null);
+        }
         callback(null, req.body.pid + '_'  + req.body.nofiles + path.extname(file.originalname)); // set the file name and extension
     }
  });

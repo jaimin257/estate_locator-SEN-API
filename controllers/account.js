@@ -18,7 +18,7 @@ const {
     RESET_PASSWORD_EXPIRY_TIME,
     NEWS_EXPIRY_TIME,
     NOTIFICATION_EXPIRY_TIME,
-    cookiesName,
+    cookiesName,    
 } = require('../configuration');
 
 
@@ -231,7 +231,7 @@ module.exports = {
                     User.findOneAndUpdate({ email }, { verified: true }, { new: true })
                         .then(newUser => {
                             res.status(httpStatusCodes.OK)
-                            .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "localhost:3000/login">SignIn</a>');
+                            .end('<h2>You are succefully verified. Now go and signIn by clicking given link. </h2> <a href = "http://localhost:3000/login">SignIn</a>');
                         })
                         .catch(err => {
                             console.log('Something went wrong');

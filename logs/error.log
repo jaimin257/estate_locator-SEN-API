@@ -65,3 +65,4 @@
 {"code":"EAUTH","response":"535 5.7.8 Error: authentication failed: authentication failure","responseCode":535,"command":"AUTH PLAIN","level":"error"}
 {"errno":"ENOTFOUND","code":"EDNS","syscall":"getaddrinfo","hostname":"Gmail","command":"CONN","level":"error"}
 {"code":"EAUTH","response":"535 5.7.8 Error: authentication failed: authentication failure","responseCode":535,"command":"AUTH PLAIN","level":"error"}
+{"errno":"ECONNREFUSED","code":"ECONNECTION","syscall":"connect","address":"10.100.56.27","port":465,"command":"CONN","level":"error"}
