@@ -231,7 +231,7 @@ module.exports = {
                     User.findOneAndUpdate({ email }, { verified: true }, { new: true })
                         .then(newUser => {
                             res.status(httpStatusCodes.OK)
-                            .end('You are succefully verified. Now go and signIn by clicking given link. ');
+                            .end('You are succefully verified. Go to login page ');
                         })
                         .catch(err => {
                             console.log('Something went wrong');

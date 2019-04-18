@@ -309,8 +309,10 @@ module.exports = {
                     var sum = 0;
                     for(var j=0;j<wordsArray.length;j++)
                     {
-                        var cnt = occurrences(string,wordsArray[j]);
+                        var cnt = occurrences(string,wordsArray[j].toLowerCase());
                         sum += cnt;
+                        if(i==1)
+                            console.log("wrarray = " + cnt);
                     }
                     props[i].searchScore = sum;
                 }
